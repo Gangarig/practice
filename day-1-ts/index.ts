@@ -273,5 +273,14 @@ function getShiftDetails(shiftId:number) :string |undefined {
     return 'Statin not found';
   }
   return `${worker.name} is assigned to ${station.name}`;
+ }
+// console.log(getShiftDetails(1))
+function getAvailableWorkersForStation(): ShiftWorker[] {
+  // const activeWorkers : ShiftWorker [] = shiftWorkers.filter(worker => worker.active === true);
+  // return activeWorkers.filter(worker => worker.status === 'available') 
+  return shiftWorkers.filter(worker =>
+    worker.active === true && 
+    worker.status === 'available'
+  )
 }
-console.log(getShiftDetails(1))
+console.log(getAvailableWorkersForStation());
