@@ -74,6 +74,24 @@ const shifts:Shift [] =[
     workerId: 3,
     stationId: 3   
     },
+    {
+    id: 4,
+    date: new Date("2026-05-20"),
+    workerId: 1,
+    stationId: 2
+    },
+    {
+      id: 5,
+      date: new Date("2026-05-21"),
+      workerId: 1,
+      stationId: 3
+    },
+    {
+      id: 6,
+      date: new Date("2026-05-20"),
+      workerId: 2,
+      stationId: 1
+    }
 ]
 
 
@@ -283,4 +301,61 @@ function getAvailableWorkersForStation(): ShiftWorker[] {
     worker.status === 'available'
   )
 }
-console.log(getAvailableWorkersForStation());
+// console.log(getAvailableWorkersForStation());
+// reduce() method One final accumulated value
+function countAvailableWorkerWithReduce() : number {
+  const totalAvailableWorkers = shiftWorkers.reduce(
+    (count :number , worker) =>
+    (worker.status === 'available' && worker.active === true) ? count+1 : count,
+    0
+  );
+  return totalAvailableWorkers;
+}
+// console.log(countAvailableWorkerWithReduce());
+function countSickWorkersWithReduce() :number {
+  const totalSickWorkers = shiftWorkers.reduce(
+    (count:number,worker) =>
+    worker.status === 'sick' ? count+1 : count,
+    0
+  )
+  return totalSickWorkers;
+}
+
+// console.log(countSickWorkersWithReduce())
+
+function getTotalShiftId():number {
+  return shifts.reduce(
+    (sum,shift) => sum + shift.id ,0
+  )
+}
+// console.log(getTotalShiftId())
+
+function countShiftsForEachWorker(): Record<number, number> {
+  return shifts.reduce((account, shift) => {
+    const workerId = shift.workerId;
+
+    account[workerId] = (account[workerId] ?? 0) + 1;
+
+    return account;
+  }, {} as Record<number, number>);
+ }
+// console.log (countShiftsForEachWorker())
+
+function countShiftsForEachStation():Record<number,number> {
+  return shifts.reduce((total,shift) => {
+    const stationId:number = shift.stationId;
+    total[stationId] = (total[stationId] ?? 0) + 1;
+    return total 
+  },{} as Record<number,number>);
+ } 
+// console.log(countShiftsForEachStation())
+
+function countWorkersByStatus () :Record <string,number>{
+  return shiftWorkers.reduce((sum,worker)=>{
+    const status = worker.status ;
+    sum[status] = (sum[status] ?? 0 ) +1;
+    return sum;
+  },{} as Record<string,number>);
+}
+
+console.log (countWorkersByStatus())
