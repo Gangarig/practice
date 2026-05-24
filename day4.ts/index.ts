@@ -1,4 +1,3 @@
-
 interface ShiftWorker {
   id: number;
   name: string;
@@ -90,6 +89,18 @@ const shifts:Shift [] =[
     {
       id: 6,
       date: new Date("2026-05-20"),
+      workerId: 3,
+      stationId: 1
+    },
+        {
+      id: 7,
+      date: new Date("2026-05-20"),
+      workerId: 1,
+      stationId: 1
+    },
+        {
+      id: 8,
+      date: new Date("2026-05-20"),
       workerId: 2,
       stationId: 1
     }
@@ -107,12 +118,6 @@ function isSameDay(dateA: Date, dateB: Date): boolean {
     dateA.getMonth() === dateB.getMonth() &&
     dateA.getDate() === dateB.getDate()
 }
-// console.log(isWorkerAssignedOnDate(
-//     1,
-//     new Date('2026-05-20T00:00:00Z')
-// ))
-
-// console.log("Day 4 TypeScript is running");
 
 function assignWorkerToShift(workerId:number ,stationId:number ,date :Date):boolean {
     const worker = shiftWorkers.find( worker => worker.id === workerId)
@@ -132,8 +137,6 @@ function assignWorkerToShift(workerId:number ,stationId:number ,date :Date):bool
         console.log('Station Does not exist');
         return false
     }
-    // const ids = shifts.map (shift => shift.id);
-    // const sortedIds = ids.sort((a,b) => b-a);
     const maxId = shifts.reduce(
         (max,shift) => shift.id > max ? shift.id : max ,0
     )
@@ -143,7 +146,6 @@ function assignWorkerToShift(workerId:number ,stationId:number ,date :Date):bool
     stationId,
     date
     };
-    // return shifts.push(...newShift)
     shifts.push(newShift)
     return true
 
@@ -156,9 +158,6 @@ function isWorkerEligible(worker:ShiftWorker):boolean {
 function stationExists (stationId:number):boolean {
     return stations.some(station => station.id === stationId)
 }
-// console.log(assignWorkerToShift(1, 2, new Date("2026-05-22")));
-// console.log(shifts);
-// console.log(assignWorkerToShift(1, 3, new Date("2026-05-22")));
 
 function removeShiftById(shiftId:number) :boolean {
     const index = shifts.findIndex(shift => shift.id === shiftId);
@@ -220,17 +219,11 @@ function isWorkerAssignedOnDateExceptShift(
   );
 }
 
-// console.log(updateShift(4, 1, 3, new Date("2026-05-22")));
-// console.log(shifts);
-
-// console.log(updateShift(4, 2, 3, new Date("2026-05-20")));
 
 function getShiftsForDate(date:Date) {
  return shifts.filter(shift => isSameDay(shift.date,date)
  )
 }
-
-// console.log(getShiftsForDate(new Date("2026-05-20")))
 
 
 function getWorkersWithoutShift(date:Date) {
@@ -238,10 +231,6 @@ return shiftWorkers.filter(worker =>
   !(shifts.some(shift => worker.id === shift.workerId &&
     isSameDay(shift.date,date))))
 }
-// console.log(getWorkersWithoutShift(new Date("May 20,2026")))
-
-// console.log(getShiftsForDate(new Date('2026-05-20')))
-// console.log(getWorkersWithoutShift(new Date('2026-05-20')))
 
 function sortDatesNewestToOldest() {
 const sortedShiftsNewestToOldest =  [...shifts].sort((a,b) => b.date.getTime() - a.date.getTime())
@@ -262,21 +251,108 @@ const sortedWorkersReverseAlphabetically = [...shiftWorkers].sort((a,b) => b.nam
 return sortedWorkersReverseAlphabetically
 }
 
-// function getAvailableWorkersSortedAlphabetically(date: Date): ShiftWorker[] {
-// return shiftWorkers
-// .filter(worker => isWorkerEligible(worker))
-// .filter(worker =>
-//   !shifts.some(shift =>
-//     shift.workerId === worker.id &&
-//     isSameDay(shift.date,date)
-//   )
-// )
-// .sort((a,b)=>a.name.localeCompare(b.name))
-// } 
-
 function getAvailableWorkersSortedAlphabetically(date: Date): ShiftWorker[] {
   return getWorkersWithoutShift(date)
     .filter(worker => isWorkerEligible(worker))
     .sort((a, b) => a.name.localeCompare(b.name));
 }
-console.log(getAvailableWorkersSortedAlphabetically(new Date('2026-05-20')))
+
+function getStationLoadForDate(date:Date): Record<string,number> {
+  const shiftsOnDate = shifts.filter(shift => isSameDay(shift.date,date))
+  return shiftsOnDate.reduce((stationCounts,shift)=> {
+    const stationName:string |undefined = findStationName(shift.stationId);
+    if(!stationName){
+      return stationCounts 
+    }
+    stationCounts[stationName] = (stationCounts[stationName] ?? 0)+1;
+    return stationCounts
+  },{} as Record<string,number>)
+}
+
+function findStationName(stationId:number) {
+  const stationName = stations.find(station => 
+    stationId === station.id
+  )
+  return stationName?.name
+}
+
+function getBusiestStation(date: Date): string | null{
+  const stationsLoad = getStationLoadForDate(date);
+  let highestCount :number =0;
+  let bussiestStation:string |null =null;
+  for (const [stationName , count] of Object.entries(stationsLoad)) {
+    if(count>=highestCount) {
+      highestCount = count;
+      bussiestStation = stationName;
+    }
+  }
+  return bussiestStation;
+}
+
+function getLeastBusyStation(date:Date):string |null {
+  const stationsLoad = getStationLoadForDate(date);
+  let lowestCount = Infinity;
+  let leastBusyStation:string |null = null;
+  for (const [stationName , count] of Object.entries(stationsLoad)){
+    if(count<lowestCount){
+      lowestCount = count;
+      leastBusyStation = stationName;
+    }
+  }
+  return leastBusyStation
+}
+
+function getAvailableStations (date:Date):Station[] {
+  const shiftsOnDate = shifts.filter(shift => isSameDay(shift.date,date));
+  return stations.filter(station => !shiftsOnDate.some(shift => shift.stationId === station.id))
+}
+
+function getWorkersGroupedByStation(date: Date):Record <string,string[]> {
+  const shiftLoad = shifts.filter(shift=>isSameDay(shift.date,date));
+  const obj : { [key: string]: string[] } ={};
+  for (const shift of shiftLoad) {
+    const tempStationName:string |undefined = getStationName(shift.stationId)
+    const tempWorkerName:string |undefined =
+    getWorkerName(shift.workerId)
+    if(!tempWorkerName){
+      continue
+    }
+    if(!tempStationName) {
+      continue
+    }
+    if(obj[tempStationName]) {
+    obj[tempStationName].push(tempWorkerName)
+    } else {
+    obj[tempStationName] = [tempWorkerName]
+    }
+}
+  return obj;
+}
+
+function getStationName (stationId:number):string |undefined {
+  return stations.find(station => station.id === stationId)?.name
+}
+function getWorkerName (workerId:number):string |undefined {
+  return shiftWorkers.find(worker => worker.id === workerId)?.name
+}
+function getStationSummary(date:Date):ShiftSummary {
+  const busiestStation = getBusiestStation(date);
+  const leastBusyStation = getLeastBusyStation(date);
+  const availableStations = getAvailableStations(date);
+  const groupedWorkers =getWorkersGroupedByStation(date);
+
+  const report : ShiftSummary = {
+    busiest :busiestStation ,
+    leastBusy:leastBusyStation ,
+    availableStations:availableStations,
+    groupedWorkers:groupedWorkers
+  }
+  return report
+}
+console.log(getStationSummary(new Date('2026-05-20')))
+interface ShiftSummary {
+  busiest: string | null,
+  leastBusy: string | null,
+  availableStations:Station[],
+  groupedWorkers: Record<string,string[]>
+}
