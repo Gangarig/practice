@@ -1,3 +1,4 @@
+
 interface ShiftWorker {
   id: number;
   name: string;
@@ -349,10 +350,94 @@ function getStationSummary(date:Date):ShiftSummary {
   }
   return report
 }
-console.log(getStationSummary(new Date('2026-05-20')))
+// console.log(getStationSummary(new Date('2026-05-20')))
 interface ShiftSummary {
   busiest: string | null,
   leastBusy: string | null,
   availableStations:Station[],
   groupedWorkers: Record<string,string[]>
 }
+
+// const workers = [
+//   { id: 1, name: "John", status: "available" },
+//   { id: 2, name: "Anna", status: "sick" },
+//   { id: 3, name: "Mark", status: "available" }
+// ];
+
+function availableWorkers():string[]{
+  const availableWorkers = workers.filter(worker => worker.status === 'available');
+  return availableWorkers.map(worker => worker.name);
+}
+
+// console.log(availableWorkers());
+
+function reportWorkersStatus ():Record <string,number>{
+  return workers.reduce((statusCount , worker) => {
+  const status:string = worker.status;
+  statusCount[status] = (statusCount[status] ?? 0 ) + 1;
+  return statusCount;
+  },{} as Record <string,number>)
+}
+// console.log(reportWorkersStatus())
+
+const products = [
+  { name: "Laptop", category: "Tech" },
+  { name: "Mouse", category: "Tech" },
+  { name: "Chair", category: "Furniture" }
+];
+
+// {
+//   Tech: ["Laptop", "Mouse"],
+//   Furniture: ["Chair"]
+// }
+
+function sortByCategory ():{[key:string] :string[]} {
+  let sorthedProductsByCategory: {[key:string] : string[]} = {};
+  for (const product of products) {
+    
+    if(sorthedProductsByCategory[product.category]){
+      sorthedProductsByCategory[product.category].push(product.name);
+    } else {
+      sorthedProductsByCategory[product.category] = [product.name];
+    }
+  }
+  return sorthedProductsByCategory
+}
+
+
+function sortByCategoryWithReduce():Record<string,string[]> {
+  return products.reduce(
+    (accumulatorProduct,currentValueOfProduct) => {
+      if (accumulatorProduct[currentValueOfProduct.category]){
+        accumulatorProduct[currentValueOfProduct.category].push(currentValueOfProduct.name)
+      } else {  
+        accumulatorProduct[currentValueOfProduct.category] = [currentValueOfProduct.name]
+      } 
+      return accumulatorProduct
+    },{} as Record<string,string[]>)
+}
+
+
+const workers = [
+  { name: "John", department: "IT", status: "available" },
+  { name: "Anna", department: "IT", status: "sick" },
+  { name: "Mark", department: "HR", status: "available" },
+  { name: "Lisa", department: "HR", status: "vacation" }
+];
+function reportDepartment ():Record<string, Record<string, number>>{
+  const data:Report = {};
+for (const worker of workers) {
+  if(!data[worker.department]) {
+    data[worker.department]={};
+  }
+  data[worker.department][worker.status]=(data[worker.department][worker.status] ?? 0)+1;
+}
+  return data
+}
+
+interface Report {
+  [department: string]: {
+    [status: string]: number
+  }
+}
+console.log(reportDepartment())
