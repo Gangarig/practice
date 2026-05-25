@@ -440,4 +440,178 @@ interface Report {
     [status: string]: number
   }
 }
-console.log(reportDepartment())
+// console.log(reportDepartment())
+
+const orders  = [
+  { customer: "John", amount: 120 },
+  { customer: "Anna", amount: 50 },
+  { customer: "John", amount: 80 }
+];
+// {
+//   John: 200,
+//   Anna: 50
+// }
+
+function calculateTotalToEachCustomrer():Record<string,{
+  totalAmount:number,
+  orderCount:number
+}> {
+  return orders.reduce((total , order ) => {
+  if(total[order.customer]){
+    total[order.customer].totalAmount = (total[order.customer].totalAmount ?? 0)+order.amount;
+    total[order.customer].orderCount = (total[order.customer].orderCount ?? 0) +1;
+  } else {
+    total[order.customer] ={
+      totalAmount:order.amount,
+      orderCount:1
+    };
+  }
+  return total
+  },{} as Record <string,{
+  totalAmount:number,
+  orderCount:number
+  }> )
+}
+// console.log(calculateTotalToEachCustomrer())
+
+// {
+//   John: {
+//     totalAmount: 200,
+//     orderCount: 2
+//   },
+//   Anna: {
+//     totalAmount: 50,
+//     orderCount: 1
+//   }
+// }
+
+const inventory = [
+  { product: "Laptop", category: "Tech", stock: 5, price: 1200 },
+  { product: "Mouse", category: "Tech", stock: 20, price: 40 },
+  { product: "Chair", category: "Furniture", stock: 8, price: 150 }
+];
+interface InventoryReport {
+  [category:string]:{
+    totalStock :number,
+    totalValue :number,
+  }
+}
+function calculateInventoryReport():InventoryReport {
+  return inventory.reduce((total, product) => {
+    if(total[product.category]){
+       total[product.category].totalStock = total[product.category].totalStock + product.stock;
+       total[product.category].totalValue = total[product.category].totalValue + (product.price*product.stock);
+    } else {
+      total[product.category] = {
+        totalStock : product.stock ,
+        totalValue : product.price * product.stock
+      }
+    }
+    return total
+  },{} as InventoryReport)
+}
+
+// console.log(calculateInventoryReport())
+
+
+const bookings = [
+  { user: "John", room: "A", nights: 2, pricePerNight: 100 },
+  { user: "Anna", room: "B", nights: 1, pricePerNight: 150 },
+  { user: "John", room: "C", nights: 3, pricePerNight: 80 }
+];
+interface BookingReport {
+  [key:string]:{
+    totalSpent:number,
+    bookingsCount:number,
+    rooms:string[]
+  }
+}
+function bookingReport():BookingReport {
+  return bookings.reduce((total,booking) =>{
+  if(total[booking.user]) {
+    total[booking.user].totalSpent = total[booking.user].totalSpent + booking.pricePerNight*booking.nights;
+    total[booking.user].bookingsCount = (total[booking.user].bookingsCount ?? 0) + 1;
+    total[booking.user].rooms.push(booking.room)
+  } else {
+    total[booking.user] = {
+      totalSpent: booking.nights*booking.pricePerNight,
+      bookingsCount: 1,
+      rooms: [booking.room]
+    }
+  }
+  return total 
+  },{} as BookingReport)
+}
+// console.log(bookingReport())
+
+
+// {
+//   John: {
+//     totalSpent: 440,
+//     bookingsCount: 2,
+//     rooms: ["A", "C"]
+//   },
+//   Anna: {
+//     totalSpent: 150,
+//     bookingsCount: 1,
+//     rooms: ["B"]
+//   }
+// }
+
+interface ShopReport {
+  [key:string]:{
+    totalSpent:number,
+    categories : {
+      [key:string]:number,
+    }
+}
+}
+const shopOrders = [
+  { customer: "John", category: "Tech", amount: 300 },
+  { customer: "John", category: "Books", amount: 50 },
+  { customer: "Anna", category: "Tech", amount: 200 },
+  { customer: "John", category: "Tech", amount: 100 }
+];
+
+function shopReport() : ShopReport {
+  return shopOrders.reduce((total,order) => {
+    
+    if(total[order.customer]){
+      if (total[order.customer].categories[order.category] ?? 0) {
+        total[order.customer].totalSpent += order.amount;
+        total[order.customer].categories[order.category] += order.amount;
+      } else {
+        console.log('function came here')
+        console.log(order.category)
+        total[order.customer].totalSpent += order.amount;
+        total[order.customer].categories[order.category] = order.amount
+      }
+    } else {
+      total[order.customer] = {
+        totalSpent: order.amount,
+        categories : {
+          [order.category] : order.amount,
+        }
+      }
+    }
+    
+    return total
+  },{} as ShopReport)
+}
+
+console.log(shopReport())
+// {
+//   John: {
+//     totalSpent: 450,
+//     categories: {
+//       Tech: 400,
+//       Books: 50
+//     }
+//   },
+//   Anna: {
+//     totalSpent: 200,
+//     categories: {
+//       Tech: 200
+//     }
+//   }
+// }
