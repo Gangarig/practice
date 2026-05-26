@@ -380,42 +380,42 @@ function reportWorkersStatus ():Record <string,number>{
 }
 // console.log(reportWorkersStatus())
 
-const products = [
-  { name: "Laptop", category: "Tech" },
-  { name: "Mouse", category: "Tech" },
-  { name: "Chair", category: "Furniture" }
-];
+// const products = [
+//   { name: "Laptop", category: "Tech" },
+//   { name: "Mouse", category: "Tech" },
+//   { name: "Chair", category: "Furniture" }
+// ];
 
 // {
 //   Tech: ["Laptop", "Mouse"],
 //   Furniture: ["Chair"]
 // }
 
-function sortByCategory ():{[key:string] :string[]} {
-  let sorthedProductsByCategory: {[key:string] : string[]} = {};
-  for (const product of products) {
+// function sortByCategory ():{[key:string] :string[]} {
+//   let sorthedProductsByCategory: {[key:string] : string[]} = {};
+//   for (const product of products) {
     
-    if(sorthedProductsByCategory[product.category]){
-      sorthedProductsByCategory[product.category].push(product.name);
-    } else {
-      sorthedProductsByCategory[product.category] = [product.name];
-    }
-  }
-  return sorthedProductsByCategory
-}
+//     if(sorthedProductsByCategory[product.category]){
+//       sorthedProductsByCategory[product.category].push(product.name);
+//     } else {
+//       sorthedProductsByCategory[product.category] = [product.name];
+//     }
+//   }
+//   return sorthedProductsByCategory
+// }
 
 
-function sortByCategoryWithReduce():Record<string,string[]> {
-  return products.reduce(
-    (accumulatorProduct,currentValueOfProduct) => {
-      if (accumulatorProduct[currentValueOfProduct.category]){
-        accumulatorProduct[currentValueOfProduct.category].push(currentValueOfProduct.name)
-      } else {  
-        accumulatorProduct[currentValueOfProduct.category] = [currentValueOfProduct.name]
-      } 
-      return accumulatorProduct
-    },{} as Record<string,string[]>)
-}
+// function sortByCategoryWithReduce():Record<string,string[]> {
+//   return products.reduce(
+//     (accumulatorProduct,currentValueOfProduct) => {
+//       if (accumulatorProduct[currentValueOfProduct.category]){
+//         accumulatorProduct[currentValueOfProduct.category].push(currentValueOfProduct.name)
+//       } else {  
+//         accumulatorProduct[currentValueOfProduct.category] = [currentValueOfProduct.name]
+//       } 
+//       return accumulatorProduct
+//     },{} as Record<string,string[]>)
+// }
 
 
 const workers = [
@@ -599,7 +599,7 @@ function shopReport() : ShopReport {
   },{} as ShopReport)
 }
 
-console.log(shopReport())
+// console.log(shopReport())
 // {
 //   John: {
 //     totalSpent: 450,
@@ -615,3 +615,127 @@ console.log(shopReport())
 //     }
 //   }
 // }
+
+const products = [
+  { id: 1, name: "Laptop", price: 1200, stock: 5 },
+  { id: 2, name: "Mouse", price: 40, stock: 20 },
+  { id: 3, name: "Keyboard", price: 80, stock: 10 }
+];
+
+const cart = {} as Cart;
+interface Cart {
+  [key:string]:{
+    productId:number,
+    price:number,
+    quantity:number,
+  },
+}
+
+function getItemInfo(productId:number) {
+  return products.find(product => product.id === productId );
+}
+
+
+function addToCart(productId:number,quantity:number):Cart {
+  const productDetail = getItemInfo(productId);
+  if(!productDetail) {
+    console.log('Product does not exist')
+    return cart
+  } 
+  if(productDetail.stock >= quantity) {
+  if(cart[productDetail.name]) {
+    cart[productDetail.name].quantity = cart[productDetail.name].quantity + quantity;
+    productDetail.stock=productDetail.stock-quantity;
+  } else {
+    cart[productDetail.name]= {
+      productId : productDetail.id,
+      price : productDetail.price,
+      quantity : quantity,
+    }
+    productDetail.stock=productDetail.stock-quantity;
+  }
+  } else {
+    console.log('Exceed the available amount')
+    return cart 
+  }
+  return cart;
+}
+console.log(addToCart(1,1))
+
+function removeFromCart(productId:number){
+  const productDetail = getItemInfo(productId)
+  if(!productDetail){
+    console.log('Product does not exist');
+    return;
+  }
+  if(cart[productDetail.name]) {
+    productDetail.stock = productDetail.stock + cart[productDetail.name].quantity;
+    delete cart[productDetail.name];
+  }
+  console.log('Product removed')
+  console.log(cart)
+  return
+}
+
+function updateCartQuantity(productId:number , newQuantity :number) {
+  if(newQuantity === 0) {
+    removeFromCart(productId)
+    return
+  }
+  const productDetail = getItemInfo(productId);
+  if(!productDetail) {
+    console.log('Product does not exist')
+    return cart
+  }
+  if(!cart[productDetail.name]) {
+    addToCart(productId , newQuantity)
+  } else {
+    if(productDetail.stock + cart[productDetail.name].quantity >= newQuantity) {
+    productDetail.stock = productDetail.stock + cart[productDetail.name].quantity-newQuantity;
+    cart[productDetail.name].quantity = newQuantity;
+  
+    } else {
+      console.log('Exceeds available amount')
+      return
+    }
+  }
+  return cart
+}
+function getCartSummary () {
+  let totalAmount:number = 0;
+  let totalQuantity :number = 0;
+  if(Object.entries(cart).length===0) {
+    console.log('Cart is empty') 
+    return
+  }
+  for (const [key , item] of Object.entries(cart)) {
+    totalAmount = totalAmount + item.price*item.quantity;
+    totalQuantity = totalQuantity + item.quantity;
+  }
+  console.log('Total Price = ',totalAmount) ;
+  console.log('Total Quantity = ', totalQuantity);
+  return
+}
+// addToCart(1,10)
+// addToCart(1,30)
+// addToCart(1,15)
+// console.log(getCartSummary())
+
+
+// console.log(addToCart(1,10))
+// console.log(updateCartQuantity(1,3))
+// console.log(removeFromCart(1))
+
+
+
+// addToCart(productId, quantity)
+// removeFromCart(productId)
+// updateCartQuantity(productId, newQuantity)
+// getCartSummary()
+
+// Rules:
+// product must exist
+// stock validation
+// duplicate cart item = increase quantity
+// quantity 0 = remove
+// summary totals
