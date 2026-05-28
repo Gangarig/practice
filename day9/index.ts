@@ -1,6 +1,5 @@
 // events[]
 // reservations{}
-
 // reserveSeat()
 // cancelReservation()
 // updateReservation()
@@ -28,8 +27,10 @@ function findEventDetail (eventId:number) {
 function reserveSeat (userName:string,eventId:number , seatQuantity:number) {
     const eventDetail = findEventDetail(eventId);
     if(!eventDetail) {
-        console.log('Event does not exist');
-        return;
+        return {
+            success : false , 
+            message : 'Event does not exist'
+        }
     }
     if(reservations[eventDetail.id]){
             if(reservations[eventDetail.id].available >= seatQuantity) {
@@ -41,8 +42,10 @@ function reserveSeat (userName:string,eventId:number , seatQuantity:number) {
                     reservations[eventDetail.id].reservations[userName] = seatQuantity;
                 }
             } else {
-                console.log ('Not enough seats available') 
-                return
+                return {
+                    success:false,
+                    message:'Not enough seats available'
+                }
             }
     } else {
         if(eventDetail.capacity >= seatQuantity) {
@@ -56,27 +59,40 @@ function reserveSeat (userName:string,eventId:number , seatQuantity:number) {
                 }
             }
         } else {
-            console.log('Not enough seats');
-            return
+                return {
+                    success:false,
+                    message:'Event has not enough capacity'
+                }
         }
     }
-    console.log(reservations)
-    return reservations
+
+    return {
+        success:true,
+        message:'Reservation is created',
+        data : reservations,
+    }
+     
 }
 
 function cancelReservation (userName:string,eventId:number,) {
     const eventDetail = findEventDetail(eventId);
     if(!eventDetail) {
-        console.log('Event does not exist');
-        return
+        return {
+            success:false,
+            message:'Event does not exist'
+        }
     }
     if(!reservations[eventDetail.id]) {
-        console.log('There are no reservations on event');
-        return
+        return {
+            success:false,
+            message:'There are no reservations on event'
+        }
     } else {
         if(!reservations[eventDetail.id].reservations[userName]) {
-            console.log('User has not reservations on the Event');
-            return
+            return {
+                success:false,
+                message:'User has not reservations on the Event'
+            }
         } else {
             // updating available and reserved seats now because i think after deletion i might lose the values
             reservations[eventDetail.id].reserved = reservations[eventDetail.id].reserved - reservations[eventDetail.id].reservations[userName];
@@ -89,54 +105,85 @@ function cancelReservation (userName:string,eventId:number,) {
             }
         }
     }
-    console.log(reservations)  
-    return reservations
+    
+    return {
+        success:true,
+        message:'Reservation cancelled',
+        data:reservations
+    }
+
 }
 
 function updateReservation(userName:string, eventId:number , newSeatQuantity:number) {
     const eventDetail = findEventDetail(eventId);
     if(!eventDetail) {
-        console.log('Event does not exist');
-        return
+        return {
+            success:false,
+            message:'User has not reservations on the Event'
+        }
     }
     if(newSeatQuantity === 0 ) {
         cancelReservation(userName,eventId);
-        return
+        return {
+            success:false , 
+            message:'Seat quantity was equal to zero , reservation will be cancelled'
+        }
     }
     if(!reservations[eventDetail.id]) {
         reserveSeat(userName,eventId,newSeatQuantity)
-        return
+        return {
+            success:true,
+            message:'There were no older reservation but current request accepted'
+        }
     }
     if(!reservations[eventDetail.id].reservations[userName]) {
         reserveSeat(userName,eventId,newSeatQuantity)
-        return
+        return {
+            success:true,
+            message:'There were no older reservation but current request accepted'
+        }
     }
     if(!(newSeatQuantity <= reservations[eventDetail.id].available + reservations[eventDetail.id].reservations[userName])){
-        console.log('There are not enough available seats');
-        return
+        return {
+            success:false,
+            message:'There are not enough seats available'
+        }
     }   
     if(!(newSeatQuantity <= reservations[eventDetail.id].capacity)){
-        console.log('Seat quantity exceeds event capacity')
-        return;
+        return {
+            success:false,
+            message:'Seat quantity extends over capacity'
+        }
     }   
     reservations[eventDetail.id].available = reservations[eventDetail.id].available + reservations[eventDetail.id].reservations[userName] - newSeatQuantity;
     reservations[eventDetail.id].reserved = reservations[eventDetail.id].reserved - reservations[eventDetail.id].reservations[userName] + newSeatQuantity;
     reservations[eventDetail.id].reservations[userName] = newSeatQuantity;            
-    console.log(reservations)
-    return reservations
+    return {
+        success:true,
+        message:'Reservation updated',
+        data:reservations,
+    }
 }
 
 function getEventSummary (eventId:number) {
     const eventDetail = findEventDetail(eventId);
     if(!eventDetail) {
-        console.log('Event does not exist');
-        return
+        return {
+            success:false,
+            message:'Event does not exist'
+        }
     }
     if(reservations[eventDetail.id]) {
-        return reservations[eventDetail.id];
+        return {
+            success:true,
+            message:'Event Summary',
+            data:reservations[eventDetail.id]
+        }
     } else {
-        console.log('There are no current reservations')
-        return reservations[eventDetail.id] = {
+        return { 
+            success:false,
+            message:'There are no current Reservations',
+            data:reservations[eventDetail.id] = {
             eventName:eventDetail.name,
             capacity:eventDetail.capacity,
             reserved:0,
@@ -144,12 +191,7 @@ function getEventSummary (eventId:number) {
             reservations:{}
         }
     }
+    }
 
 }
-// reserveSeat('Ganaa',1,1)
-// reserveSeat('John',1,1)
-// updateReservation('Ganaa',1,2)
-// updateReservation('Marie',1,2)
-// updateReservation('John',1,1)
-// updateReservation('John',1,0)
-console.log(getEventSummary(1))
+console.log(reserveSeat("Ganaa",1,1))
