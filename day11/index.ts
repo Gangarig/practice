@@ -303,7 +303,11 @@ function searchUser(name:string):ApiResponse<User[]> {
 }
 console.log(searchUser('a'))
 
+function testMap () {
+    return users.map(user=> user.name)
+}
 
+console.log(testMap())
 
 
 
