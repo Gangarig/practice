@@ -1,11 +1,4 @@
-//Products
-// createProduct()
-// updateProduct()
-// deleteProduct()
-// searchProducts()
-// findProductById()
-// getProductSummary()
-// Product Inventory System
+
 interface Product {
     id: number;
     name: string;
@@ -14,18 +7,7 @@ interface Product {
     category: string;
     isActive: boolean;
 }
-interface CreateProductRequest {
-    name: string;
-    price: number;
-    stock: number;
-    category: string;
-}
-interface UpdateProductRequest {
-    name?: string;
-    price?: number;
-    stock?: number;
-    category?: string;
-}
+
 const products: Product[] = [
     {
         id: 1,
@@ -58,68 +40,223 @@ const products: Product[] = [
         stock: 10,
         category: "Furniture",
         isActive: true
+    },
+    {
+        id: 5,
+        name: "Chair",
+        price: 150,
+        stock: 15,
+        category: "Furniture",
+        isActive: true
+    },
+    {
+        id: 6,
+        name: "Coffee",
+        price: 8,
+        stock: 100,
+        category: "Food",
+        isActive: true
+    },
+    {
+        id: 7,
+        name: "Tea",
+        price: 5,
+        stock: 80,
+        category: "Food",
+        isActive: true
     }
 ];
-// First MAP Challenge
 
-// Build:
+function getProductNames () {
+return products.map(product => product.name)
+}
+// console.log(getProductNames())
 
-// getProductNames()
+function getProductLabels(){
+    return products.map(product => ({
+    name: product.name,
+    price: product.price
+    }))
+}
+// console.log(getProductLabels())
 
-// Output:
+function totalValueOfInevtory () {
+    return products.reduce((total, product) => 
+    total = total + product.price * product.stock
+, 0)
+}
+// console.log(totalValueOfInevtory())
 
-// [
-//   "Laptop",
-//   "Mouse",
-//   "Keyboard",
-//   "Desk"
-// ]
+interface InventorySummary {
+    totalProducts: number;
+    totalStock: number;
+    totalValue: number;
+}
+// function getInventorySummary():InventorySummary{
+//     const totalProducts = products.length;
+//     const totalStock = products.reduce((total,product)=>
+//     total += product.stock ,0 )
+//     const totalValue = products.reduce((total,product)=>
+//     total += product.price*product.stock ,0)
+//     return {
+//         totalProducts:totalProducts,
+//         totalStock:totalStock,
+//         totalValue:totalValue
+//     }
+// }
+function getInventorySummary(): InventorySummary {
+    return products.reduce(
+        (summary, product) => {
+            summary.totalProducts += 1;
+            summary.totalStock += product.stock;
+            summary.totalValue += product.price * product.stock;
 
-// Hint:
+            return summary;
+        },
+        {
+            totalProducts: 0,
+            totalStock: 0,
+            totalValue: 0
+        }
+    );
+}
+// console.log(getInventorySummary())
 
-// products.map(...)
-// First REDUCE Challenge
+function getProductsSortedByPrice() {
+    const sortedProducts =  [...products].sort((a,b) => (b.price - a.price))
+    return sortedProducts
 
-// Build:
+}
 
-// getTotalInventoryValue()
+// console.log(getProductsSortedByPrice())
 
-// Meaning:
+function getActiveProductNamesSortedByPrice() {
+    return products.filter(product => product.isActive === true).sort((a,b) => a.price - b.price).map(product => product.name)
+}
 
-// Laptop    1200 * 5
-// Mouse       25 * 50
-// Keyboard    80 * 20
-// Desk       300 * 10
+// console.log(getActiveProductNamesSortedByPrice())
 
-// Calculate total value of all inventory.
+function groupProductsByCategory():Record<string, string[]> {
+    return products.reduce((sortedProducts,product) => {
+        if(product.isActive === true) {
+        if(sortedProducts[product.category]) {
+            sortedProducts[product.category].push(product.name)
+        } else {
+            sortedProducts[product.category]=[];
+            sortedProducts[product.category].push(product.name)
+        }
+        }
+        return sortedProducts
+    },{} as Record<string,string[]>)
+}
 
-// Hint:
+function totalValueOfProductsByCategory():Record<string,number> {
+    return products.reduce((summary,product) => {
+        if(summary[product.category]) {
+            summary[product.category] = summary[product.category] + product.price*product.stock
+        } else {
+            summary[product.category] = product.price*product.stock
+        }
+    return summary
+    },{
+    } as Record <string,number> )
+}
 
-// products.reduce(...)
-// Harder Reduce
+// console.log(totalValueOfProductsByCategory())
 
-// Build:
+// console.log(groupProductsByCategory())
 
-// getInventorySummary()
 
-// Return:
+function groupProductsByCategoryFullProducts():Record<string,Product[]> {
+    return products.reduce((summary,product)=> {
+        if(!summary[product.category]) {
+            summary[product.category] = [];
+        }
+            summary[product.category].push(product);
+
+        return summary
+    },{}as Record <string,Product[]>)
+}
+
+// console.log(groupProductsByCategoryFullProducts())
+
+function getMostExpensiveProduct(): Product | undefined {
+    return products.reduce((expensive,product)=>{
+        if(expensive.price < product.price) {
+            expensive = product;
+        }
+    return expensive
+    })
+}
+
+// console.log(getMostExpensiveProduct())
+
+
+function getCategoryStatistics() :Record <string,
+                                         {
+                                            productCount:number,
+                                            totalStock:number,
+                                            totalValue:number
+                                         }
+                                         >
+{
+    return products.reduce((result,product) => {
+        if(!result[product.category]){
+            result[product.category]={
+                productCount : 0,
+                totalStock : 0,
+                totalValue : 0
+            }
+        }
+        result[product.category].productCount = result[product.category].productCount + 1;
+        result[product.category].totalStock = result[product.category].totalStock + product.stock ; 
+        result[product.category].totalValue = result[product.category].totalValue + product.stock * product.price;
+        return result
+    },{} as Record <string,
+                            {
+                               productCount:number,
+                               totalStock:number,
+                               totalValue:number
+                            }
+                            >)
+}
+
+// console.log(getCategoryStatistics())
+function getAveragePriceByCategory(): Record<string, number> | undefined{
+    const categoryData : Record<string,{
+        totalPrice:number,
+        totalCount:number
+    }> =  products.reduce((sum,product) => {
+        if(sum[product.category]) {
+            sum[product.category].totalPrice = sum[product.category].totalPrice + product.price * product.stock;
+            sum[product.category].totalCount = sum[product.category].totalCount + product.stock;
+        } else {
+            sum[product.category] = {
+            totalPrice : product.stock * product.price,
+            totalCount : product.stock,
+            }
+        }
+        return sum
+    },{} as Record <string ,{
+        totalPrice:number,
+        totalCount:number
+    }>)
+    const summary: Record<string,number> ={};
+    for (const category in categoryData) {
+        summary[category] = categoryData[category].totalPrice/categoryData[category].totalCount;
+    }
+    return summary
+}
+console.log(getAveragePriceByCategory())
+
 
 // {
-//     totalProducts: 4,
-//     totalStock: 85,
-//     totalValue: 11850
+//   Electronics: [
+//     "Laptop",
+//     "Mouse",
+//     "Keyboard"
+//   ],
+//   Furniture: [
+//     "Desk"
+//   ]
 // }
-
-// Tomorrow's order:
-
-// 1. Read about map()
-// 2. Read about reduce()
-// 3. Build Product CRUD
-// 4. Solve map challenge
-// 5. Solve reduce challenge
-
-// Do NOT look up solutions immediately.
-
-// Spend 20-30 minutes struggling with map() and reduce() first. That's where the learning happens. 😈🔥
-
-// You're ready for them now.
