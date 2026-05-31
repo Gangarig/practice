@@ -247,16 +247,133 @@ function getAveragePriceByCategory(): Record<string, number> | undefined{
     }
     return summary
 }
-console.log(getAveragePriceByCategory())
 
+interface OrderItem {
+    productId: number;
+    quantity: number;
+}
 
-// {
-//   Electronics: [
-//     "Laptop",
-//     "Mouse",
-//     "Keyboard"
-//   ],
-//   Furniture: [
-//     "Desk"
-//   ]
-// }
+interface Order {
+    id: number;
+    customerName: string;
+    items: OrderItem[];
+    isPaid: boolean;
+}
+
+const orders: Order[] = [
+    {
+        id: 1,
+        customerName: "John",
+        isPaid: true,
+        items: [
+            { productId: 1, quantity: 2 },
+            { productId: 2, quantity: 5 }
+        ]
+    },
+    {
+        id: 2,
+        customerName: "Anna",
+        isPaid: false,
+        items: [
+            { productId: 3, quantity: 1 }
+        ]
+    },
+    {
+        id: 3,
+        customerName: "Mike",
+        isPaid: true,
+        items: [
+            { productId: 4, quantity: 3 },
+            { productId: 5, quantity: 2 }
+        ]
+    },
+    {
+        id: 4,
+        customerName: "Sarah",
+        isPaid: true,
+        items: [
+            { productId: 6, quantity: 10 },
+            { productId: 7, quantity: 5 }
+        ]
+    },
+    {
+        id: 5,
+        customerName: "Tom",
+        isPaid: false,
+        items: [
+            { productId: 1, quantity: 1 }
+        ]
+    }
+];
+
+function getPaidOrders():Order[] {
+return orders.filter(order => order.isPaid === true)
+}
+
+// console.log(getPaidOrders())
+
+function getOrderById(id:number):Order | undefined {
+    return orders.find(order => order.id === id)
+}
+
+// console.log(getOrderById(1))
+
+function getUnpaidOrdersCount():number{
+    return orders.filter(order => order.isPaid === false).length
+}
+
+// console.log(getUnpaidOrdersCount())
+
+function findProductById(productId:number):Product | undefined {
+    return products.find(product => product.id === productId)
+}
+
+function getOrderTotal(orderId:number): number{
+    const order = getOrderById(orderId);
+    if(!order) {
+        console.log('order does not exist')
+        return 0 
+    }
+    return order.items.reduce((total,item)=>{
+        const product = findProductById(item.productId);
+        if(!product) {
+            console.log('Product does not exist')
+            return total
+        }
+        return total + item.quantity * product?.price;
+    },0)
+}
+
+// console.log(getOrderTotal(1))
+
+function getTotalRevenue(): number{
+    const paidOrders:Order[] = orders.filter(order => order.isPaid === true);
+    return paidOrders.reduce ((totalRevenue,order) => {
+        const orderTotal = getOrderTotal(order.id);
+        return totalRevenue + orderTotal;
+    },0)
+}
+
+// console.log(getTotalRevenue())
+interface TopCustomer {
+    customerName:string,
+    totalSpent:number,
+}
+
+function getTopCustomer(): TopCustomer {
+    const paidOrders = orders.filter(order => order.isPaid === true);
+    return paidOrders.reduce((highestPaid, order) => {
+        const orderTotal = getOrderTotal(order.id);
+        if(highestPaid.totalSpent < orderTotal) {
+            highestPaid.totalSpent = orderTotal;
+            highestPaid.customerName = order.customerName;
+        }
+        return highestPaid
+    }, {
+        customerName:'',
+        totalSpent:0,
+    });
+}
+
+// console.log(getTopCustomer())
+
