@@ -381,17 +381,59 @@ interface Order {
 
 const orders: Order[] = [];
 
+// function checkoutCart(
+//     cartId: number
+// ): Order | undefined {
+//     if(cartId <= 0) {
+//         console.log('Input is not valid');
+//         return
+//     }
+//     const cart = getCartById(cartId);
+//     if(!cart) {
+//         console.log('Cart does not exist');
+//         return
+//     }
+//     const cartTotal = getCartTotal(cartId);
+
+//     const newOrder:Order={
+//         id: orders.length + 1,
+//         customerName:cart.customerName,
+//         items:cart.items,
+//         total:cartTotal,
+//     }
+//     orders.push(newOrder);
+
+//     const indexOfCart = carts.findIndex(cart => cart.id === cartId);
+//     if (indexOfCart !== -1) {
+//     carts.splice(indexOfCart, 1);
+//     }
+
+//     return newOrder
+// }
+
+// console.log(checkoutCart(2))
+
+interface ApiResponse<T> {
+    success: boolean;
+    message: string;
+    data?: T;
+}
+
 function checkoutCart(
     cartId: number
-): Order | undefined {
+): ApiResponse<Order> {
     if(cartId <= 0) {
-        console.log('Input is not valid');
-        return
+        return {
+            success:false,
+            message:'Input invalid'
+        }
     }
     const cart = getCartById(cartId);
     if(!cart) {
-        console.log('Cart does not exist');
-        return
+        return {
+            success:false,
+            message:'Cart not found'
+        }
     }
     const cartTotal = getCartTotal(cartId);
 
@@ -408,7 +450,81 @@ function checkoutCart(
     carts.splice(indexOfCart, 1);
     }
 
-    return newOrder
+    return {
+        success:true,
+        message:'Checkout Completed',
+        data:newOrder,
+    }
 }
 
-console.log(checkoutCart(2))
+function getProductDetails(
+    productId:number
+):ApiResponse<Product>{
+    if(productId <= 0) {
+        return {
+            success:false,
+            message:'Input invalid'
+        }
+    }
+    const product = findProductById(productId);
+    if(!product){
+        return{
+        success:false,
+        message:'Product does not exist'
+    }}
+    return {
+        success:true,
+        message:'Product Detail',
+        data:product,
+    }
+}
+
+function addStock(
+    productId:number,
+    amount:number
+): ApiResponse<Product> {
+    if(amount <= 0) {
+        return{
+            success:false,
+            message:'Input invalid',
+        }
+    }
+    const product = findProductById(productId);
+    if(!product) {
+        return{
+            success:false,
+            message:'Product not found',
+        }
+    }
+    product.stock = product.stock + amount;
+    return {
+        success:true,
+        message:'Stock addedd',
+        data:product
+    }
+} 
+// console.log(addStock(1,10))
+
+function deactivateProduct(
+    productId:number
+): ApiResponse<Product> {
+    if(productId <= 0) {
+        return{
+            success:false,
+            message:'Input invalid',
+        }
+    }
+    const product = findProductById(productId);
+    if(!product) {
+        return {
+            success:false,
+            message:'Product not found'
+        }
+    }
+    product.isActive = false;
+    return {
+        success:true,
+        message:'Product Deactivated',
+        data:product
+    }
+}
