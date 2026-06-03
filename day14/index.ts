@@ -83,4 +83,95 @@ function restockCategory(
     return productsByCategory
 }
 
-console.log(restockCategory('electronics',5))
+// console.log(restockCategory('electronics',5))
+
+interface CategoryStats {
+    category: string;
+    productCount: number;
+    totalStock: number;
+    totalValue: number;
+}
+function getCategoryStats():CategoryStats []{
+    const category =  products.reduce((total,product)=> {
+        if(total[product.category]) {
+            total[product.category].category = product.category,
+            total[product.category].productCount = (total[product.category].productCount ?? 0) + 1;
+            total[product.category].totalStock = (total[product.category].totalStock ?? 0)+ product.stock;
+            total[product.category].totalValue = (total[product.category].totalValue ?? 0) + (product.price * product.stock);
+        } else {
+            total[product.category] = {
+                category:product.category,
+                productCount : 1,
+                totalStock : product.stock,
+                totalValue : product.price * product.stock,
+            }
+        }
+    return total
+    },{} as Record <string,CategoryStats> )
+    return Object.values(category)
+}
+
+// console.log(getCategoryStats())
+
+interface CategorySummary {
+    category: string;
+    averagePrice: number;
+    mostExpensiveProduct: string;
+}
+
+function getCategorySummary():CategorySummary[]{
+    const summary = products.reduce((total,product)=> {
+        if(total[product.category]) {
+            total[product.category].category = product.category,
+            total[product.category].sumPrice = (total[product.category].sumPrice ?? 0) + product.price;
+            total[product.category].productCount = (total[product.category].productCount ?? 0) + 1;
+            if(total[product.category].mostExpensiveProductPrice < product.price) { 
+                total[product.category].mostExpensiveProduct = product.name ; 
+                total[product.category].mostExpensiveProductPrice = product.price;  
+            }   
+
+            
+        } else {
+            total[product.category] = {
+                category: product.category,
+                sumPrice : product.price,
+                productCount : 1,
+                mostExpensiveProduct: product.name,
+                mostExpensiveProductPrice:product.price,
+            }
+        }
+        return total
+    },{} as Record <string , {
+        category:string,
+        sumPrice:number,
+        productCount:number,
+        mostExpensiveProduct:string,
+        mostExpensiveProductPrice:number
+    }>)
+    const summaryData : CategorySummary[] = [];
+    for ( const product of Object.values(summary)) {
+        summaryData.push({
+            category:product.category,
+            averagePrice:product.sumPrice/product.productCount,
+            mostExpensiveProduct:product.mostExpensiveProduct,
+        })
+    }
+    return summaryData
+    
+}
+function findProductByName(name:string) {
+    return products.find(product => 
+    { 
+        if(product.name.toLocaleLowerCase() === name.toLocaleLowerCase()){ return product.name;
+
+    }})
+}
+function findProductByPrice (price:number) {
+    return products.find(product => {
+        if(price === product.price){
+            return product.name
+    }
+    })
+}
+
+console.log(getCategorySummary())
