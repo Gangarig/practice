@@ -385,3 +385,23 @@ function refundOrder(
         data:order
     } 
 }
+
+
+function getUser() {
+    return new Promise((resolve) => {
+        setTimeout(() => {
+            resolve("John");
+        }, 2000);
+    });
+}
+
+const user = getUser();
+
+console.log(user);
+async function run() {
+    const user = await getUser();
+
+    console.log(user);
+}
+
+run();
