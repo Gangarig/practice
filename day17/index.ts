@@ -484,13 +484,13 @@ async function createOrderAsync(
     }
     return response.data
 }
-async function fetchUsers(): Promise<User[]> {
-    return new Promise((resolve, reject) => {
-        setTimeout(() => {
-            resolve(users)
-        }, 1000);
-    })
-}
+// async function fetchUsers(): Promise<User[]> {
+//     return new Promise((resolve, reject) => {
+//         setTimeout(() => {
+//             resolve(users)
+//         }, 1000);
+//     })
+// }
 // async function run() {
 //     const users = await fetchUsers();
 //     const products = await fetchProducts();
@@ -498,8 +498,14 @@ async function fetchUsers(): Promise<User[]> {
 //         users,products
 //     }
 // }
-async function run() {
-        const [users,products] = await Promise.all([fetchUsers(),fetchProducts()])
-        return [users,products]
-}
-console.log(run())
+// async function run() {
+//         const [users,products] = await Promise.all([fetchUsers(),fetchProducts()])
+//         return [users,products]
+// }
+// console.log(run())
+export{}
+// async function fetchUsers(): Promise<User[]>{
+//     const response = await fetch(...);
+//     const users = await response.json();
+//     return users
+// }
