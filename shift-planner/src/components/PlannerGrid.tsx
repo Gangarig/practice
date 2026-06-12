@@ -84,45 +84,6 @@ function WeeklyGrid({stations,workers,assignments}:WeeklyDayProps) {
             )}
             </div>
         )}
-                    {/* const assigned = assignments.find(
-                        assignment => (assignment.stationId === station.id && day.day === assignment.date.day))
-                    if(!assigned) {
-                        <div 
-                        style={{
-                            border:'1px solid white',width:'15%', padding:'5px',
-                        }}
-                        ></div>
-                        return
-                    }
-                    
-                    if(worker) {
-                        return <div 
-                        style={{
-                            border:'1px solid white',width:'15%', padding:'5px',
-                        }}
-                        >{worker.name}   {assigned.date.day} </div>
-                    }
-                    return <div 
-                    style={{
-                        border:'1px solid white',width:'15%', padding:'5px',
-                    }}
-                    > </div>  */}
-        {/* <div style={{
-            display:'flex',flexDirection:'row',justifyContent:'space-evenly',
-            paddingLeft:'100px',
-            width:'100%'
-        }}>
-            {weekdays.map(day => <div>{day.day}</div>)}
-        </div>
-        <div
-        style={{
-            display:'flex',
-            flexDirection:'column',
-            width:'100%',
-            alignItems:'flex-start',gap:'30px'
-        }}>
-            {stations.map(station => <div>{station.name}</div>)}
-        </div> */}
     </div>
   )
 }
