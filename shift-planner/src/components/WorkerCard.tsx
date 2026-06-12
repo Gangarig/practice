@@ -6,9 +6,15 @@ interface WorkerCardProps {
 }
 
 function WorkerCard({worker,selectedWorker,setSelectedWorker}:WorkerCardProps) {
+    const isSelected = worker.name === selectedWorker?.name;
   return (
     <div
-    style={{border:'1px solid white' , width:'100px'}}
+    onClick={() => setSelectedWorker(worker)}
+    style={{border:'1px solid white' , width:'150px',borderRadius:'10px',
+    cursor:'pointer',
+    margin:'5px',
+    background:isSelected ? 'white' : '#16171d'
+    }}
     >{worker.name}</div>
   )
 }

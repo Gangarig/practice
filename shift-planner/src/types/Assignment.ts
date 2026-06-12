@@ -6,5 +6,8 @@ export interface Assignment {
     note?:string | null,
 }
 
-export type Weekday = 'Monday' | 'Tuesday' | 'Wednesday' | 'Thursday' | 'Friday'
+export type Weekday = {
+    id:number,
+    day:string,
+}
 
