@@ -2,18 +2,33 @@ import type { Worker } from '../types/Worker'
 interface WorkerCardProps {
     worker :Worker,
     selectedWorker:Worker | null,
-    setSelectedWorker:(value:Worker)=>void 
+    onSelectWorker:(value:Worker)=>void 
 }
 
-function WorkerCard({worker,selectedWorker,setSelectedWorker}:WorkerCardProps) {
+function WorkerCard({worker,selectedWorker,onSelectWorker}:WorkerCardProps) {
     const isSelected = worker.name === selectedWorker?.name;
+    let bgColor = 'green';
+        if(worker.status === 'sick') {
+            bgColor = 'red';
+
+    }
+        if(worker.status === 'vacation') {
+            bgColor = 'yellow';
+
+    }
+        if(worker.status === 'inactive') {
+            bgColor = 'gray';
+
+    }
   return (
     <div
-    onClick={() => setSelectedWorker(worker)}
+    onClick={() => onSelectWorker(worker)}
     style={{border:'1px solid white' , width:'150px',borderRadius:'10px',
     cursor:'pointer',
     margin:'5px',
-    background:isSelected ? 'white' : '#16171d'
+    color:'black',
+    font:'15px',
+    background:isSelected ? 'beige' : bgColor 
     }}
     >{worker.name}</div>
   )

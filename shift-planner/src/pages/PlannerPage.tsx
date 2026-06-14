@@ -7,13 +7,20 @@ import type { Worker } from '../types/Worker';
 import WorkerDetail from '../components/WorkerDetail';
 import StationList from '../components/StationList';
 import WeeklyGrid from '../components/PlannerGrid';
+import type { Station } from '../types/Station';
+import StationDetail from '../components/StationDetail';
+import AssignmentControls from '../components/AssignmentControls';
+import type  { Assignment } from '../types/Assignment';
+
+
 
 function PlannerPage() {
     const [workers,setWorkers] = useState(mockWorkers)
     const [stations,setStations] = useState(mockStations)
     const [assignments,setAssignments] = useState(mockAssignments)
     const [selectedWorker,setSelectedWorker] = useState<Worker | null>(null)
-
+    const [selectedStation , setSelectedStation] = useState<Station | null>(null)
+    const [newAssignment , setNewAssignment] = useState<Assignment | null> (null)
   return (
     <div
     style={{display:'flex',justifyContent:'center',alignItems:'center',
@@ -47,12 +54,46 @@ function PlannerPage() {
         : null}
         </div>
     </div>
+    <div
+    style={{width:'100%',
+        display:'flex',
+        flexDirection:'row',
+        border:'1px solid white' ,
+        borderRadius:'5px',
+        justifyContent:'space-evenly',
+        alignItems:'center',
+        padding:'20px',
+        position:'relative',
+        marginTop:'50px'
+    }}
+    >
+    <StationList 
+    stations={stations}
+    selectedStation={selectedStation}
+    onSelectedStation={setSelectedStation}
+    />
+    
+    <StationDetail 
+    assignments={assignments}
+    selectedStation={selectedStation}
+    onSelectedStation={setSelectedStation}
+    /></div>
+    <AssignmentControls
+    assignments={assignments}
+    selectedWorker={selectedWorker}
+    selectedStation={selectedStation}
+    newAssignment={newAssignment}
+    setNewAssignment={setNewAssignment}
+    workers={workers}
+    stations={stations}
+    />
     <WeeklyGrid 
     stations={stations}
     workers={workers}
     assignments={assignments}
     />
     </div>
+
   )
 }
 
