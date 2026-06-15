@@ -13,14 +13,19 @@ import AssignmentControls from '../components/AssignmentControls';
 import type  { Assignment } from '../types/Assignment';
 
 
-
 function PlannerPage() {
     const [workers,setWorkers] = useState(mockWorkers)
     const [stations,setStations] = useState(mockStations)
     const [assignments,setAssignments] = useState(mockAssignments)
     const [selectedWorker,setSelectedWorker] = useState<Worker | null>(null)
     const [selectedStation , setSelectedStation] = useState<Station | null>(null)
-    const [newAssignment , setNewAssignment] = useState<Assignment | null> (null)
+
+    function handleCreateAssignment(assignment: Assignment) {
+    setAssignments(prevAssignments => [
+        ...prevAssignments,
+        assignment
+    ]);
+    }
   return (
     <div
     style={{display:'flex',justifyContent:'center',alignItems:'center',
@@ -82,8 +87,7 @@ function PlannerPage() {
     assignments={assignments}
     selectedWorker={selectedWorker}
     selectedStation={selectedStation}
-    newAssignment={newAssignment}
-    setNewAssignment={setNewAssignment}
+    onCreateAssignment = {handleCreateAssignment}
     workers={workers}
     stations={stations}
     />

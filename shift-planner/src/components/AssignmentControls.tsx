@@ -9,24 +9,14 @@ interface AssignmentControlsProps {
     stations:Station[] | null,
     workers:Worker[] | null,
     assignments:Assignment[],
-    newAssignment:Assignment|null,
-    setNewAssignment :(value:Assignment|null)=>void
+    onCreateAssignment : (value:Assignment)=>void
 }
 
-function AssignmentControls({selectedStation,selectedWorker,stations,workers ,assignments,newAssignment, setNewAssignment}:AssignmentControlsProps) {
+function AssignmentControls({selectedStation,selectedWorker,stations,workers ,assignments,onCreateAssignment}:AssignmentControlsProps) {
 
-    const [selectedWorkerId,setSelectedWorkerId] = useState<number|undefined>(selectedWorker?.id);
-    const [selectedStationId,setSelectedStationId] = useState<number|undefined>(selectedStation?.id)
-    const [selectedDay,setSelectedDay] = useState<Weekday | ''>('')   
-    let targetedAssignment = assignments.find(item => 
-            item.date === selectedDay && item.stationId === selectedStationId && item.workerId === selectedWorkerId
-        )
-    let assignmentsOnSelectedDay = assignments.filter(item=> 
-            item.date === selectedDay)
-    let alreadyAssigned = assignmentsOnSelectedDay.filter(item => 
-        item.workerId === selectedWorkerId
-    )
-
+    const [selectedWorkerId,setSelectedWorkerId] = useState<number|''>(selectedWorker?.id ?? '');
+    const [selectedStationId,setSelectedStationId] = useState<number|''>(selectedStation?.id ?? '');
+    const [selectedDay,setSelectedDay] = useState<Weekday | ''>('') 
 
     function handleSubmit(){
         if(!selectedWorkerId) {
@@ -38,28 +28,25 @@ function AssignmentControls({selectedStation,selectedWorker,stations,workers ,as
         if(!selectedDay){
             return console.log('Date error')
         }
-        if(targetedAssignment) {
-            return console.log('assignment exist')
+        if(assignments.find(item => item.date === selectedDay && selectedStationId === item.stationId)) {
+            return console.log('worker already assigned on station')
         }
-        if(!(alreadyAssigned.length ===1)) {
-            return console.log('already assigned')
+        if(assignments.find(item => item.date === selectedDay && selectedWorkerId === item.workerId)) {
+            return console.log('worker already assigned on other station')
         }
         const newId = assignments.length + 1;
-        setNewAssignment({
-            id:newId,
-            workerId:selectedWorkerId,
-            stationId:selectedStationId,
-            date:selectedDay,
-            note:''
-        })
-        if(!newAssignment){
-            return console.log('input invalid')
+        const assignment: Assignment = {
+            id: newId,
+            workerId: selectedWorkerId,
+            stationId: selectedStationId,
+            date: selectedDay,
+            note: ''
         }
-        assignments.push(newAssignment)
-        setNewAssignment(null)
+        onCreateAssignment(assignment)
         setSelectedDay('')
-        setSelectedStationId(undefined)
-        setSelectedWorkerId(undefined)
+        setSelectedStationId('')
+        setSelectedWorkerId('')
+        return
     }
 
 
@@ -78,9 +65,11 @@ function AssignmentControls({selectedStation,selectedWorker,stations,workers ,as
     }}
     >
         <select 
-        onChange={(e)=>setSelectedStationId(Number(e.target.value))}
+        onChange={(e)=>setSelectedStationId(
+            e.target.value === '' ? '' : Number(e.target.value)
+        )}
         name="selectStation" id="station" value={selectedStationId}>
-            <option value={undefined}>Select a Station</option>
+            <option value={''}>Select a Station</option>
             {stations && stations.map(station => 
                 <option
                 key={station.id}
@@ -91,9 +80,11 @@ function AssignmentControls({selectedStation,selectedWorker,stations,workers ,as
 
 
         <select 
-        onChange={(e)=>setSelectedWorkerId(Number(e.target.value))}
+        onChange={(e)=>setSelectedWorkerId(
+            e.target.value === '' ? '' : Number(e.target.value)
+        )}
         name="selectWorker" id="worker" value={selectedWorkerId}> 
-            <option value={undefined}>Select a Worker</option>
+            <option value={''}>Select a Worker</option>
             {workers && workers.map(worker => 
                 <option
                 key={worker.id}
