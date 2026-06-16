@@ -6,7 +6,7 @@ interface WorkerCardProps {
 }
 
 function WorkerCard({worker,selectedWorker,onSelectWorker}:WorkerCardProps) {
-    const isSelected = worker.name === selectedWorker?.name;
+    const isSelected = worker.id === selectedWorker?.id;
     let bgColor = 'green';
         if(worker.status === 'sick') {
             bgColor = 'red';

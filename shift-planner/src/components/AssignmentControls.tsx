@@ -17,7 +17,10 @@ function AssignmentControls({selectedStation,selectedWorker,stations,workers ,as
     const [selectedWorkerId,setSelectedWorkerId] = useState<number|''>(selectedWorker?.id ?? '');
     const [selectedStationId,setSelectedStationId] = useState<number|''>(selectedStation?.id ?? '');
     const [selectedDay,setSelectedDay] = useState<Weekday | ''>('') 
-
+    const [note , setNote] = useState<string | null>(null)
+    function handleNote (note:string) {
+        setNote(note)
+    }
     function handleSubmit(){
         if(!selectedWorkerId) {
             return console.log('Worker error')
@@ -40,12 +43,13 @@ function AssignmentControls({selectedStation,selectedWorker,stations,workers ,as
             workerId: selectedWorkerId,
             stationId: selectedStationId,
             date: selectedDay,
-            note: ''
+            note: note
         }
         onCreateAssignment(assignment)
         setSelectedDay('')
         setSelectedStationId('')
         setSelectedWorkerId('')
+        setNote(null)
         return
     }
 
@@ -55,13 +59,15 @@ function AssignmentControls({selectedStation,selectedWorker,stations,workers ,as
     style={{
         width:'100%' , 
         display:'flex',
-        flexDirection:'row',
+        flexDirection:'column',
         alignItems:'center',
         justifyContent:'center',
         border:'1px solid white',
         padding:'10px' ,
         borderRadius:'10px',
-        marginTop:'20px'
+        marginTop:'20px',
+        gap:'10px',
+        
     }}
     >
         <select 
@@ -104,8 +110,17 @@ function AssignmentControls({selectedStation,selectedWorker,stations,workers ,as
                 <option value="Thursday">Thursday</option>
                 <option value="Friday">Friday</option>
         </select>
-
-
+        <div>
+            <p>Note</p>
+            <textarea
+            name='assignmentNote'
+            rows={3}
+            cols={20}
+            value={note ?? ''}
+            style={{borderRadius:'5px',}}
+            onChange={(e)=>handleNote(e.target.value)}
+            ></textarea>
+        </div>
         <button onClick={()=>handleSubmit()}>Create Assignment</button>
     </div>
   )

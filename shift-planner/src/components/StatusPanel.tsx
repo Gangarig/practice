@@ -1,4 +1,3 @@
-import React from 'react'
 import type { Worker } from '../types/Worker'
 import WorkerCard from './WorkerCard'
 interface StatusPanelProps {

@@ -2,11 +2,12 @@ import { useState } from 'react'
 import mockWorkers from "../data/mockWorkers";
 import mockStations from '../data/mockStations';
 import mockAssignments from '../data/mockAssignments';
+import AssignmentDetail from '../components/AssignmentDetail';
 import WorkerList from '../components/WorkerList';
 import type { Worker } from '../types/Worker';
 import WorkerDetail from '../components/WorkerDetail';
 import StationList from '../components/StationList';
-import WeeklyGrid from '../components/PlannerGrid';
+import PlannerGrid from '../components/PlannerGrid';
 import type { Station } from '../types/Station';
 import StationDetail from '../components/StationDetail';
 import AssignmentControls from '../components/AssignmentControls';
@@ -14,17 +15,34 @@ import type  { Assignment } from '../types/Assignment';
 
 
 function PlannerPage() {
-    const [workers,setWorkers] = useState(mockWorkers)
-    const [stations,setStations] = useState(mockStations)
+    const [workers] = useState(mockWorkers)
+    const [stations] = useState(mockStations)
     const [assignments,setAssignments] = useState(mockAssignments)
     const [selectedWorker,setSelectedWorker] = useState<Worker | null>(null)
     const [selectedStation , setSelectedStation] = useState<Station | null>(null)
+    const [ selectedAssignment , setSelectedAssignment] = useState<Assignment | null> (null)
 
     function handleCreateAssignment(assignment: Assignment) {
     setAssignments(prevAssignments => [
         ...prevAssignments,
         assignment
     ]);
+    }
+
+    function handleUpdateAssignment(assignment:Assignment) {
+    setAssignments(prev =>
+    prev.map(item =>
+        item.id === assignment.id
+        ? assignment
+        : item
+    )
+    )
+    }
+
+    function handleRemoveAssignment (assignment:Assignment) {
+        setAssignments(prev => prev.filter(item => item.id !== assignment.id))
+        setSelectedAssignment(prev => prev?.id === assignment.id ? null : prev)
+        return
     }
   return (
     <div
@@ -91,10 +109,17 @@ function PlannerPage() {
     workers={workers}
     stations={stations}
     />
-    <WeeklyGrid 
+    {selectedAssignment && 
+    <AssignmentDetail assignment={selectedAssignment}
+    onEditAssignmentNote={handleUpdateAssignment}
+    />
+    }
+    <PlannerGrid 
     stations={stations}
     workers={workers}
     assignments={assignments}
+    onRemoveAssignment={handleRemoveAssignment}
+    onSelectAssignment={setSelectedAssignment}
     />
     </div>
 

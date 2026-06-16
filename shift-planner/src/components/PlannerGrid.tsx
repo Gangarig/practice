@@ -7,15 +7,17 @@ import GridCell from "./GridCell";
 
 
 
-interface WeeklyDayProps {
+interface PlannerGridProps {
     stations:Station[],
     workers:Worker[],
-    assignments:Assignment[]
+    assignments:Assignment[],
+    onRemoveAssignment:(assignment:Assignment )=>void
+    onSelectAssignment:(value:Assignment | null) =>void
 }
-function PlannerGrid({stations,workers,assignments}:WeeklyDayProps) {
+function PlannerGrid({stations,workers,assignments,onRemoveAssignment,onSelectAssignment}:PlannerGridProps) {
     const weekdays = Weekdays;
     
-    function findWorkerName(id:number):Worker | undefined {
+    function findWorkerById(id:number):Worker | undefined {
         return workers.find(worker => worker.id === id)
     }
 
@@ -28,10 +30,12 @@ function PlannerGrid({stations,workers,assignments}:WeeklyDayProps) {
         }}>
         <div style={{
         }}>Days</div>
-        {stations.map(station => <GridCell worker={null} station={station}/>)}
+        {stations.map(station => <GridCell
+        key={station.id} onRemoveAssignment={onRemoveAssignment} worker={null} station={station} assignment={null}
+        onSelectAssignment={onSelectAssignment} />)}
         </div>
         {weekdays.map(
-            day => <div style={{
+            day => <div key={day} style={{
                 display:'flex', flexDirection:'column',width:'15%'
                 }}> {day}
                     {stations.map(station => {
@@ -39,13 +43,16 @@ function PlannerGrid({stations,workers,assignments}:WeeklyDayProps) {
                             assignment.stationId === station.id && day === assignment.date 
                         )
                         if(!assignment) {
-                            return   <GridCell key={station.id} station={null}  worker={null} />
+                            return   <GridCell key={station.id} station={null}  worker={null} onRemoveAssignment={onRemoveAssignment} assignment={null}
+                            onSelectAssignment={onSelectAssignment}  />
                         }
-                        const worker = findWorkerName(assignment.workerId)
+                        const worker = findWorkerById(assignment.workerId)
                         if(!worker) {
-                            return <GridCell key={station.id} station={null} worker={null} />
+                            return <GridCell key={station.id} station={null} worker={null}  onRemoveAssignment={onRemoveAssignment} assignment={null} 
+                            onSelectAssignment={onSelectAssignment} />
                         }
-                        return <GridCell key={station.id} station={null} worker={worker} />
+                        return <GridCell key={station.id} station={null} worker={worker} assignment={assignment}  onRemoveAssignment={onRemoveAssignment}
+                        onSelectAssignment={onSelectAssignment} />
                     })}
             </div>
         )}

@@ -1,5 +1,4 @@
 import type { Worker } from '../types/Worker'
-import WorkerCard from './WorkerCard'
 import StatusPanel from './StatusPanel'
 interface WorkerListProps {
     workers : Worker[],
