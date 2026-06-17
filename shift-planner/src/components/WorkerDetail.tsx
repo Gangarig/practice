@@ -15,7 +15,7 @@ function WorkerDetail({worker,setSelectedWorker}:WorkerDetailProps) {
         <p style={{textOverflow:'ellipsable'}}>Role: {worker?.role}</p>
         <p style={{textOverflow:'ellipsable'}}>email: {worker?.email}</p>
         <p style={{textOverflow:'ellipsable'}}>vacationDays: {worker?.vacationDays}</p>
-        <p style={{textOverflow:'ellipsable'}}>plustHours: {worker?.plusHours}</p>
+        <p style={{textOverflow:'ellipsable'}}>plusHours: {worker?.plusHours}</p>
         <button style={{width:'50px'}}
         onClick={()=>setSelectedWorker(null)}
         >X</button>

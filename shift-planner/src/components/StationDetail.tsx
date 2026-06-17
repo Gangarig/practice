@@ -33,7 +33,7 @@ function StationDetail({ assignments,selectedStation , onSelectedStation}:Statio
            onClick={()=>onSelectedStation(null)}
         >Clear</button>
         {stationAssignment && stationAssignment?.map(assignment => 
-            <div>
+            <div key={assignment.id}>
                 <h2>Assignment ID : {assignment.id}</h2>
                 <p>Date - {assignment.date}</p>
                 <p>Station ID - {assignment.stationId}</p>

@@ -112,8 +112,8 @@ function PlannerPage() {
     {selectedAssignment && 
     <AssignmentDetail assignment={selectedAssignment}
     onEditAssignmentNote={handleUpdateAssignment}
-    workers={mockWorkers}
-    stations={mockStations}
+    workers={workers}
+    stations={stations}
     />
     }
     <PlannerGrid 
