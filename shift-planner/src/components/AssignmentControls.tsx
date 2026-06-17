@@ -17,7 +17,7 @@ function AssignmentControls({selectedStation,selectedWorker,stations,workers ,as
     const [selectedWorkerId,setSelectedWorkerId] = useState<number|''>(selectedWorker?.id ?? '');
     const [selectedStationId,setSelectedStationId] = useState<number|''>(selectedStation?.id ?? '');
     const [selectedDay,setSelectedDay] = useState<Weekday | ''>('') 
-    const [note , setNote] = useState<string | null>(null)
+    const [note , setNote] = useState<string>('')
     function handleNote (note:string) {
         setNote(note)
     }
@@ -32,7 +32,7 @@ function AssignmentControls({selectedStation,selectedWorker,stations,workers ,as
             return console.log('Date error')
         }
         if(assignments.find(item => item.date === selectedDay && selectedStationId === item.stationId)) {
-            return console.log('worker already assigned on station')
+            return console.log('station/day already occupied')
         }
         if(assignments.find(item => item.date === selectedDay && selectedWorkerId === item.workerId)) {
             return console.log('worker already assigned on other station')
@@ -49,7 +49,7 @@ function AssignmentControls({selectedStation,selectedWorker,stations,workers ,as
         setSelectedDay('')
         setSelectedStationId('')
         setSelectedWorkerId('')
-        setNote(null)
+        setNote('')
         return
     }
 

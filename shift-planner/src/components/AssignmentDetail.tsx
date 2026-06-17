@@ -1,16 +1,33 @@
 
 import type { Assignment } from '../types/Assignment'
-
+import type { Worker } from '../types/Worker'
+import type { Station } from '../types/Station'
 interface AssignmentDetailProps {
     assignment : Assignment | null,
+    workers:Worker[],
+    stations:Station[],
     onEditAssignmentNote:(value:Assignment) => void
 }
-function AssignmentDetail({assignment, onEditAssignmentNote}:AssignmentDetailProps) {
-    
+function AssignmentDetail({assignment,workers,stations, onEditAssignmentNote}:AssignmentDetailProps) {
+    if(!assignment){
+        return null
+    }
+    const worker:Worker | undefined =  workers.find(worker => worker.id === assignment.workerId)
+    if(!worker) {
+        return null
+    }
+    const station :Station | undefined = stations.find(station => station.id === assignment.stationId)
+    if(!station) {
+        return null 
+    }
+
     function handeEditNote(value:string){
-        if (!assignment) return;
-        assignment.note = value;
-        onEditAssignmentNote(assignment)
+        if (!assignment) return null;
+        const updateAssignment = {
+            ...assignment,
+            note:value
+        }
+        onEditAssignmentNote(updateAssignment)
     }
   return (
     <div style={{
@@ -23,10 +40,10 @@ function AssignmentDetail({assignment, onEditAssignmentNote}:AssignmentDetailPro
         <h2> Assignment Detail</h2>
         <div>Assignment Id - {assignment?.id}</div>
         <div>Date - {assignment?.date}</div>
-        <div>Station ID - {assignment?.stationId}</div>
-        <div> Worker ID - {assignment?.workerId}</div>
+        <div>Station - {station.name}</div>
+        <div> Worker - {worker.name}</div>
         {assignment && <textarea 
-        value={assignment.note || ''}
+        value={assignment?.note || ''}
         onChange={(e)=>handeEditNote(e.target.value)}
         />}
     </div>
