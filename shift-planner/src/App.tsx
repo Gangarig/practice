@@ -1,4 +1,5 @@
 import PlannerPage from "./pages/PlannerPage";
+import WorkerForm from "./components/WorkerForm";
 function App() {
   return <div 
   style={{
@@ -7,6 +8,7 @@ function App() {
   }}>
   <h1>Shift Planner</h1>
   <PlannerPage/>
+  <WorkerForm/>
   </div>;
 }
 
