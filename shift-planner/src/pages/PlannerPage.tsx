@@ -12,16 +12,16 @@ import type { Station } from '../types/Station';
 import StationDetail from '../components/StationDetail';
 import AssignmentControls from '../components/AssignmentControls';
 import type  { Assignment } from '../types/Assignment';
-
+import WorkerForm from '../components/WorkerForm';
+import EditWorker from '../components/EditWorker';
 
 function PlannerPage() {
-    const [workers] = useState(mockWorkers)
-    const [stations] = useState(mockStations)
+    const [workers,setWorkers] = useState(mockWorkers)
+    const [stations,setStations] = useState(mockStations)
     const [assignments,setAssignments] = useState(mockAssignments)
     const [selectedWorker,setSelectedWorker] = useState<Worker | null>(null)
     const [selectedStation , setSelectedStation] = useState<Station | null>(null)
     const [ selectedAssignment , setSelectedAssignment] = useState<Assignment | null> (null)
-
     function handleCreateAssignment(assignment: Assignment) {
     setAssignments(prevAssignments => [
         ...prevAssignments,
@@ -44,6 +44,29 @@ function PlannerPage() {
         setSelectedAssignment(prev => prev?.id === assignment.id ? null : prev)
         return
     }
+
+    function handleRemoveWorker(selectedWorker:Worker) {
+        setWorkers(prev => prev.filter(item => item.id !== selectedWorker.id))
+        setSelectedWorker(null)
+        return
+    }
+
+    function handleCreateWorker(newWorker:Worker) {
+        setWorkers(prev => [
+            ...prev ,
+            newWorker
+        ])
+        return
+    }
+        function handleUpdateWorker(worker:Worker) {
+        setWorkers(prev => 
+            prev.map((item) => item.id === worker.id ? worker : item)
+        )
+        return
+    }
+
+
+
   return (
     <div
     style={{display:'flex',justifyContent:'center',alignItems:'center',
@@ -122,6 +145,16 @@ function PlannerPage() {
     assignments={assignments}
     onRemoveAssignment={handleRemoveAssignment}
     onSelectAssignment={setSelectedAssignment}
+    />
+
+
+    <WorkerForm
+    workers={workers}
+    onCreateWorker={handleCreateWorker}
+    />
+    <EditWorker
+    selectedWorker={selectedWorker ?? null}
+    onUpdateWorker={handleUpdateWorker}
     />
     </div>
 

@@ -39,7 +39,6 @@ function handleRemove(event: MouseEvent<HTMLButtonElement>, assignment: Assignme
                         alignItems:'center',
                         flexDirection:'column',
                         border:'1px solid white',
-                        padding:'5px',
                         cursor:'pointer',
                         width:'100%',minHeight:'100px', height:'fit'}}
         >{worker.name}
