@@ -63,11 +63,11 @@ function WorkerForm({workers,onCreateWorker}:WorkerFormProps) {
         >
             <h2>Worker Form</h2>
             <label htmlFor="name">Name</label>
-            <input type="name" onChange={(e)=> setName(e.target.value)} placeholder='Worker Name' />
+            <input type="name" value={name} onChange={(e)=> setName(e.target.value)} placeholder='Worker Name' />
             <label htmlFor="name">Email</label>
-            <input type="email" placeholder='Email' onChange={(e)=> setEmail(e.target.value)} />
+            <input type="email" value={email} placeholder='Email' onChange={(e)=> setEmail(e.target.value)} />
             <label htmlFor="name">Role</label>
-            <select onChange={(e)=>setRole(e.target.value as 'worker' | 'manager' | 'admin' | 'owner' | 'accountant')} name="selectRole" id="role">
+            <select value={role} onChange={(e)=>setRole(e.target.value as 'worker' | 'manager' | 'admin' | 'owner' | 'accountant')} name="selectRole" id="role">
                 <option value="">Select role</option>
                 <option value="worker">worker</option>
                 <option value="manager">manager</option>
@@ -76,7 +76,7 @@ function WorkerForm({workers,onCreateWorker}:WorkerFormProps) {
                 <option value="owner">owner</option>
             </select>
             <label htmlFor="name">Status</label>
-            <select name="status" id="status" onChange={(e)=>setStatus(e.target.value as 'available' | 'sick' | 'vacation' | 'inactive')}>
+            <select value={status} name="status" id="status" onChange={(e)=>setStatus(e.target.value as 'available' | 'sick' | 'vacation' | 'inactive')}>
                 <option value="">Select status</option>
                 <option value="available">available</option>
                 <option value="sick">sick</option>

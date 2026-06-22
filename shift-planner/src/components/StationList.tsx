@@ -27,6 +27,7 @@ function StationList({stations , selectedStation , onSelectedStation}:StationLis
       onSelectedStation={onSelectedStation}
       />
       )}
+      {stations.length === 0 && <p>No Stations Found</p>}
     </div>
   )
 }

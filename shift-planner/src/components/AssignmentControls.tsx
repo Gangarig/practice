@@ -37,6 +37,13 @@ function AssignmentControls({selectedStation,selectedWorker,stations,workers ,as
         if(assignments.find(item => item.date === selectedDay && selectedWorkerId === item.workerId)) {
             return console.log('worker already assigned on other station')
         }
+        if(selectedStation?.active === false) {
+            return console.log('Station is not acitve')
+        }
+        if(selectedWorker &&(selectedWorker.status === 'inactive' || selectedWorker.status === 'sick' || selectedWorker.status === 'vacation')) {
+            return console.log('worker is not available')
+        }
+
         const newId = assignments.length + 1;
         const assignment: Assignment = {
             id: newId,

@@ -6,7 +6,7 @@ interface WorkerFormProps {
     selectedWorker:Worker | null,
     onUpdateWorker:(value:Worker) => void
 }
-function EditWorker({selectedWorker,onUpdateWorker}:WorkerFormProps) {
+function WorkerEdit({selectedWorker,onUpdateWorker}:WorkerFormProps) {
     const [name,setName] = useState<string >(selectedWorker?.name ?? '')
     const [email,setEmail] = useState<string>(selectedWorker?.email ?? '')
     const [role,setRole] = useState<'worker' | 'manager' | 'admin' | 'owner' | 'accountant' | ''>(selectedWorker?.role ?? '')
@@ -32,6 +32,10 @@ function EditWorker({selectedWorker,onUpdateWorker}:WorkerFormProps) {
             return null
         }
         onUpdateWorker(updatedWorker)
+        setName('')
+        setEmail('')
+        setRole('')
+        setStatus('')
     console.log('Submitted')
     return
     }
@@ -96,4 +100,4 @@ function EditWorker({selectedWorker,onUpdateWorker}:WorkerFormProps) {
   )
 }
 
-export default EditWorker
+export default WorkerEdit
