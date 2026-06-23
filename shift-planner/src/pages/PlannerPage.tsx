@@ -26,21 +26,21 @@ import StationSort from '../components/StationSort';
 
 
 function PlannerPage() {
-    const [workers,setWorkers] = useState(() => {
+    const [workers,setWorkers] = useState<Worker[]>(() => {
         const savedWorkers = localStorage.getItem('workers');
         if(savedWorkers) {
             return JSON.parse(savedWorkers);
         }
         return mockWorkers
     });
-    const [stations,setStations] = useState(()=> {
+    const [stations,setStations] = useState<Station[]>(()=> {
         const savedStations = localStorage.getItem('stations');
         if(savedStations) {
             return JSON.parse(savedStations)
         }
         return mockStations
     })
-    const [assignments,setAssignments] = useState(()=> {
+    const [assignments,setAssignments] = useState<Assignment[]>(()=> {
         const savedAssignmants = localStorage.getItem('assignments');
         if(savedAssignmants) {
             return JSON.parse(savedAssignmants)
@@ -103,34 +103,34 @@ function PlannerPage() {
             console.log('Worker has assignment')
             return null
         }
-        setWorkers((prev:Worker[]) => prev.filter(item => item.id !== selectedWorker.id))
+        setWorkers(prev => prev.filter(item => item.id !== selectedWorker.id))
         setSelectedWorker(null)
         return
     }
 
     function handleCreateWorker(newWorker:Worker) {
-        setWorkers((prev:Worker[]) => [
+        setWorkers(prev => [
             ...prev ,
             newWorker
         ])
         return
     }
     function handleUpdateWorker(worker:Worker) {
-        setWorkers((prev:Worker[]) => 
+        setWorkers(prev => 
             prev.map((item) => item.id === worker.id ? worker : item)
         )
         setSelectedWorker(worker)
         return
     }
     function handleCreateStation(newStation:Station) {
-        setStations((prev:Station[])=>[
+        setStations(prev=>[
             ...prev,
             newStation
         ])
         return
     }
     function handleUpdateStation(station:Station) {
-        setStations((prev:Station[])=>
+        setStations(prev=>
         prev.map((item:Station) => item.id === station.id ? 
         station : item,
     ))
@@ -139,12 +139,12 @@ function PlannerPage() {
     }
 
     function handleRemoveStation (station:Station) {
-        const hasAssignmentsOnStation = assignments.some((item:Assignment)=> item.stationId === station.id)
+        const hasAssignmentsOnStation = assignments.some(item=> item.stationId === station.id)
         if(hasAssignmentsOnStation) {
             console.log('station has assignments')
             return null
         }
-        setStations((prev:Station[])=> prev.filter(
+        setStations(prev=> prev.filter(
             item => item.id !== station.id)
         )
         setSelectedStation(null)
