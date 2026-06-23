@@ -15,6 +15,17 @@ function Dashboard({
   stations,
   assignments
 }:DashboardProps) {
+  const totalVacationDaysAndPlusHours = workers.reduce<Record<string,number>>((sum,worker) =>{
+    sum.totalVacationDays = (sum.totalVacationDays ?? 0) + (worker?.vacationDays ?? 0);
+    sum.totalPlusHours = (sum.totalPlusHours ?? 0) + (worker?.plusHours ?? 0);
+    return sum
+  },{
+    totalVacationDays:0,
+    totalPlusHours:0,
+  })
+  const totalInactiveStations = stations.filter(
+    station => !station.active
+  ).length
   const workerCounts = workers.reduce((sum, worker) => {
     sum[worker.status] = (sum[worker.status] ?? 0) + 1;
     return sum
@@ -25,7 +36,7 @@ function Dashboard({
     inactive: 0,
   })
 
-  const activeStation = stations.filter(item => item.active === true).length
+  const activeStation = stations.filter(item => item.active).length
 
   const workersWithoutAssignments : Worker[] = workers.filter(worker => 
     !assignments.some(assignment => assignment.workerId === worker.id)
@@ -87,6 +98,11 @@ function Dashboard({
           <div>
             {mostLoadedWorker && <p>Most Loaded Worker {mostLoadedWorker.name}</p> }
             {leastLoadedWorker && <p>Least Loaded Worker {leastLoadedWorker.name}</p> }
+          </div>
+          <div>
+            <p>Total Vacation Days ---{totalVacationDaysAndPlusHours.totalVacationDays} </p>
+            <p>Total Plus Hours ---{totalVacationDaysAndPlusHours.totalPlusHours} </p>
+            <p>Inactive Stations --- {totalInactiveStations}</p>
           </div>
       </div>
     </div>

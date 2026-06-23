@@ -20,73 +20,52 @@ function WorkerDetail({worker,onRemoveWorker,setSelectedWorker,assignments,onCha
   }
 
   function getWorkerAssignmentCount(workerId:number | undefined) {
-    return assignments.filter(item => item.id === workerId).length
+    return assignments.filter(item => item.workerId === workerId).length
   }
 
-
-
   function handleAddVacation(vacationDays:string){
-    if(!worker) return null
-    const currentDays = worker.vacationDays ?? 0;
-    if(vacationDays === '') return null
-    const amount = Number(vacationDays)
-    if(amount<=0) return console.log('amount must be positive')
-
-
-      const newWorkerState = {
-        ...worker,
-        vacationDays:Number(vacationDays) + currentDays
-      }
-    updateWorkerState(newWorkerState)
+    updateWorkerNumberField('vacationDays',vacationDays,'add')
     setVacationDays('')
     return
   }
   function handleRemoveVacation(vacationDays:string){
-    if(!worker) return null
-    const currentDays = worker.vacationDays ?? 0;
-    if(vacationDays === '') return null
-    const amount = Number(vacationDays)
-    if(amount<=0) return null
-    if((currentDays - amount) < 0) return console.log('Result must be positive') 
-      
-    const newWorkerState = {
-        ...worker,
-        vacationDays:currentDays - Number(vacationDays)
-      }
+    updateWorkerNumberField('vacationDays',vacationDays,'remove')
     setVacationDays('')
-    updateWorkerState(newWorkerState)
     return
   }
 
+ 
   function handleAddPlusHours (plusHours:string) {
-    if(!worker) return null
-    const currentAmount = worker.plusHours ?? 0;
-    if(plusHours === '') return null
-    const amount = Number(plusHours)
-    if(amount<0) return null
-    const newWorkerState = {
-      ...worker,
-      plusHours: currentAmount + amount
-    }
+    updateWorkerNumberField('plusHours',plusHours,'add')
     setPlusHours('')
-    updateWorkerState(newWorkerState)
     return
-
   }
 
   function handleRemovePlusHours(plusHours:string) {
-        if(!worker) return null
-    const currentAmount = worker.plusHours ?? 0;
-    if(plusHours === '') return null
-    const amount = Number(plusHours)
-    if(amount<0) return null
-    const newWorkerState = {
-      ...worker,
-      plusHours: currentAmount - amount
-    }
+    updateWorkerNumberField('plusHours',plusHours,'remove')
     setPlusHours('')
-    updateWorkerState(newWorkerState)
     return
+  }
+
+  function updateWorkerNumberField(field: 'vacationDays' | 'plusHours', amountText:string, operation:'add' | 'remove') {
+    if(!worker) return null
+    const amount = Number(amountText);
+    if(amountText === '') return null;
+    if(amount <= 0 ) return null;
+    const currentValue = worker[field] ?? 0;
+  const newValue = 
+    operation ==='add' ?
+      currentValue + amount :
+      currentValue - amount
+
+  if(field === 'vacationDays' && newValue < 0) return
+  updateWorkerState({
+    ...worker,
+    [field]:newValue
+  })
+
+
+
   }
 
 

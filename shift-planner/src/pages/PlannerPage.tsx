@@ -55,6 +55,9 @@ function PlannerPage() {
     const [sortOrderStation,setSortOrderStation] = useState<'Default' | 'Name A-Z' | 'Name Z-A'  | 'Active first' | 'Inactive first'>('Default')
     
 
+
+    
+
     useEffect(()=> {
     localStorage.setItem('workers',JSON.stringify(workers))
     localStorage.setItem('stations',JSON.stringify(stations))
@@ -63,6 +66,12 @@ function PlannerPage() {
 
 
 
+    function handleResetData () {
+        localStorage.removeItem('workers');
+        localStorage.removeItem('stations');
+        localStorage.removeItem('assignments');
+        window.location.reload();
+    }
 
     function handleCreateAssignment(assignment: Assignment) {
     setAssignments((prevAssignments:Assignment[]) => [
@@ -188,6 +197,11 @@ function PlannerPage() {
     flexDirection:'column',position:'relative',padding:'15px'
     }}
     >
+    <div style={{
+        position:'absolute',top:'10px' , right:'50px'
+    }}>
+        <button onClick={handleResetData}>RESET DATA</button>
+    </div>
     <Dashboard
         workers={workers}
         stations={stations}
@@ -256,8 +270,6 @@ function PlannerPage() {
     /></div>
     <AssignmentControls
     assignments={assignments}
-    selectedWorker={selectedWorker}
-    selectedStation={selectedStation}
     onCreateAssignment = {handleCreateAssignment}
     workers={workers}
     stations={stations}
