@@ -20,7 +20,7 @@ import Dashboard from '../components/Dashboard';
 import Search from '../components/Search';
 import WorkerSort from '../components/WorkerSort';
 import StationSort from '../components/StationSort';
-
+import WorkerAvailbility from '../components/WorkerAvailbility';
 
 
 
@@ -202,11 +202,13 @@ function PlannerPage() {
     }}>
         <button onClick={handleResetData}>RESET DATA</button>
     </div>
+
     <Dashboard
         workers={workers}
         stations={stations}
         assignments={assignments}
     />
+    <WorkerAvailbility workers={workers} assignments={assignments} stations={stations}/>
     <Search search={search} onSearch={setSearch}
     />
 
@@ -300,7 +302,7 @@ function PlannerPage() {
     
     />
 
-        <StationForm
+    <StationForm
     stations={stations}
     onCreateStation={handleCreateStation}
     />
@@ -309,7 +311,6 @@ function PlannerPage() {
     onUpdateStation={handleUpdateStation}
     onRemoveStation={handleRemoveStation}
     />
-
     </div>
 
   )
