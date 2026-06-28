@@ -2,13 +2,15 @@ import type { Worker } from '../types/Worker'
 import type { Assignment } from '../types/Assignment'
 import type { Weekday } from '../types/Assignment'
 import { Weekdays } from '../data/Weekdays'
-import type { Station } from '../types/Station'
-interface WorkerAvailabilityProps {
-workers : Worker[],
-assignments:Assignment[],
-stations: Station[]
-}
-function WorkerAvailability({workers,assignments,stations}:WorkerAvailabilityProps) {
+import useApp from '../hooks/useApp'
+
+
+function WorkerAvailability(){
+    const {
+        workers,
+        assignments,
+        stations
+    } = useApp()
     const week:Weekday[] = Weekdays;
     function getAvailabilityText(worker:Worker, assignment:Assignment | undefined) {
         if (worker.status !== 'available') return worker.status

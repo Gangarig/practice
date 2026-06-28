@@ -1,20 +1,15 @@
 
 import type { Worker } from '../types/Worker'
-import type { Station } from '../types/Station'
-import type { Assignment } from '../types/Assignment'
+import useApp from '../hooks/useApp'
+
+function Dashboard() {
+  const {
+    workers ,
+    stations,
+    assignments,
+  } = useApp()
 
 
-interface DashboardProps {
-  workers:Worker[],
-  stations:Station[],
-  assignments:Assignment[]
-}
-
-function Dashboard({
-  workers,
-  stations,
-  assignments
-}:DashboardProps) {
   const totalVacationDaysAndPlusHours = workers.reduce<Record<string,number>>((sum,worker) =>{
     sum.totalVacationDays = (sum.totalVacationDays ?? 0) + (worker?.vacationDays ?? 0);
     sum.totalPlusHours = (sum.totalPlusHours ?? 0) + (worker?.plusHours ?? 0);

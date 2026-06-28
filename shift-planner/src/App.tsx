@@ -1,13 +1,8 @@
-import PlannerPage from "./pages/PlannerPage";
+import { RouterProvider } from "react-router-dom";
+import {router} from './routes/router'
+
 function App() {
-  return <div 
-  style={{
-    padding:'10px',
-    
-  }}>
-  <h1>Shift Planner</h1>
-  <PlannerPage/>
-  </div>;
+  return <RouterProvider router={router}/>
 }
 
 export default App;
