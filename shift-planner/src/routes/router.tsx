@@ -5,7 +5,7 @@ import DashboardPage from "../pages/DashboardPage";
 import WorkersPage from "../pages/WorkersPage";
 import StationsPage from "../pages/StationsPage";
 import SettingsPage from "../pages/SettingsPage";
-import LoginPage from "../pages/LoginPage";
+import LoginPage from "../pages/Auth/LoginPage";
 import RegisterPage from "../pages/Auth/RegisterPage";
 import ProtectedRoute from "../components/layout/ProtectedRoute";
 import Unauthorized from "../pages/Unauthorized";
@@ -39,7 +39,7 @@ export const router = createBrowserRouter([
                         },
                         {element: <ProtectedRoute allowedRoles={["admin", "owner"]} />,
                         children: [{ path: "settings", element: <SettingsPage /> },],},
-                        {element:<Unauthorized/> , path:'/unauthorized'}
+                        {element:<Unauthorized/> , path:'unauthorized'}
                     ],
                     },
                 ]

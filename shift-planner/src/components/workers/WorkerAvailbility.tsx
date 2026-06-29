@@ -15,7 +15,7 @@ function WorkerAvailability(){
     function getAvailabilityText(worker:Worker, assignment:Assignment | undefined) {
         if (worker.status !== 'available') return worker.status
         if (assignment) {
-            const station = stations.find(station => station.id === assignment.id)
+            const station = stations.find(station => station.id === assignment.stationId)
             if(!station) return 'station not found'
             return station.name
         }
