@@ -7,7 +7,7 @@ import StationsPage from "../pages/StationsPage";
 import SettingsPage from "../pages/SettingsPage";
 import LoginPage from "../pages/LoginPage";
 import RegisterPage from "../pages/Auth/RegisterPage";
-import ProtectedRoute from "../components/ProtectedRoute";
+import ProtectedRoute from "../components/layout/ProtectedRoute";
 import Unauthorized from "../pages/Unauthorized";
 import AppProvider from "../context/AppProvider";
 

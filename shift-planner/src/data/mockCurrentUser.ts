@@ -1,6 +1,6 @@
 const currentUser : User = {
     name:'Ganaa',
-    role: 'admin' as const,
+    role: 'owner' as const,
     isLoggedIn:true,
 }
 export const roles = ['worker' , 'manager' , 'admin' , 'owner']

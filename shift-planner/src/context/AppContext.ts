@@ -15,10 +15,11 @@ export interface AppContextValue {
     createStation : (station: Station) => void
     updateStation : (station: Station) => void
     removeStation : (station: Station) => void
-    
+
     createAssignment : (assignment : Assignment) => void
     updateAssignment : (assignment : Assignment) => void
     removeAssignment : (assignment : Assignment) => void
+    resetLocalData :() => void
 }
 
 export const AppContext = createContext<AppContextValue | null>(null)

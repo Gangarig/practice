@@ -1,4 +1,4 @@
-import type { Worker } from '../types/Worker'
+import type { Worker } from '../../types/Worker'
 import WorkerCard from './WorkerCard'
 interface StatusPanelProps {
     title:'available' | 'not available'

@@ -1,4 +1,4 @@
-import type { Worker } from '../types/Worker'
+import type { Worker } from '../../types/Worker'
 interface WorkerCardProps {
     worker :Worker,
     selectedWorker:Worker | null,

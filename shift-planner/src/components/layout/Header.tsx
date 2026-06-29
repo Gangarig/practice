@@ -1,4 +1,4 @@
-import currentUser from '../data/mockCurrentUser';
+import currentUser from '../../data/mockCurrentUser';
 import { Group ,Text} from '@mantine/core';
 
 interface HeaderProps {

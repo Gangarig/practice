@@ -1,10 +1,8 @@
-import { Weekdays } from "../data/Weekdays"
-import type { Station } from "../types/Station";
-import type { Worker } from "../types/Worker";
-import type { Assignment } from "../types/Assignment";
+import { Weekdays } from "../../data/Weekdays"
+import type { Station } from "../../types/Station";
+import type { Worker } from "../../types/Worker";
+import type { Assignment } from "../../types/Assignment";
 import GridCell from "./GridCell";
-
-
 
 
 interface PlannerGridProps {

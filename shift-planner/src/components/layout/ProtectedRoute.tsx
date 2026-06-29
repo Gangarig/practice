@@ -1,5 +1,5 @@
 import { Navigate,Outlet } from "react-router-dom"
-import currentUser from "../data/mockCurrentUser"
+import currentUser from "../../data/mockCurrentUser"
 
 interface ProtectedRouteProps {
     allowedRoles:string[]

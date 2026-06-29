@@ -1,7 +1,7 @@
-
-import type { Assignment } from '../types/Assignment'
-import type { Worker } from '../types/Worker'
-import type { Station } from '../types/Station'
+import { useEffect, useState } from 'react'
+import type { Assignment } from '../../types/Assignment'
+import type { Worker } from '../../types/Worker'
+import type { Station } from '../../types/Station'
 interface AssignmentDetailProps {
     assignment : Assignment | null,
     workers:Worker[],
@@ -9,6 +9,12 @@ interface AssignmentDetailProps {
     onEditAssignmentNote:(value:Assignment) => void
 }
 function AssignmentDetail({assignment,workers,stations, onEditAssignmentNote}:AssignmentDetailProps) {
+    const [note, setNote] = useState('')
+
+    useEffect(() => {
+        setNote(assignment?.note ?? '')
+    }, [assignment])
+
     if(!assignment){
         return null
     }
@@ -21,13 +27,14 @@ function AssignmentDetail({assignment,workers,stations, onEditAssignmentNote}:As
         return null 
     }
 
-    function handeEditNote(value:string){
-        if (!assignment) return null;
-        const updateAssignment = {
+    function handleEditNote(value:string){
+        if(!assignment) return null
+        setNote(value)
+        const updatedAssignment = {
             ...assignment,
-            note:value
+            note: value
         }
-        onEditAssignmentNote(updateAssignment)
+        onEditAssignmentNote(updatedAssignment)
     }
   return (
     <div style={{
@@ -42,10 +49,10 @@ function AssignmentDetail({assignment,workers,stations, onEditAssignmentNote}:As
         <div>Date - {assignment?.date}</div>
         <div>Station - {station.name}</div>
         <div> Worker - {worker.name}</div>
-        {assignment && <textarea 
-        value={assignment?.note || ''}
-        onChange={(e)=>handeEditNote(e.target.value)}
-        />}
+        <textarea 
+        value={note}
+        onChange={(e)=>handleEditNote(e.target.value)}
+        />
     </div>
   )
 }

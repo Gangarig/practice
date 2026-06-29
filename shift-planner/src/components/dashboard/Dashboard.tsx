@@ -1,6 +1,6 @@
 
-import type { Worker } from '../types/Worker'
-import useApp from '../hooks/useApp'
+import type { Worker } from '../../types/Worker'
+import useApp from '../../hooks/useApp'
 
 function Dashboard() {
   const {

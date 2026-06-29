@@ -1,8 +1,8 @@
-import type { Worker } from '../types/Worker'
-import type { Assignment } from '../types/Assignment'
-import type { Weekday } from '../types/Assignment'
-import { Weekdays } from '../data/Weekdays'
-import useApp from '../hooks/useApp'
+import type { Worker } from '../../types/Worker'
+import type { Assignment } from '../../types/Assignment'
+import type { Weekday } from '../../types/Assignment'
+import { Weekdays } from '../../data/Weekdays'
+import useApp from '../../hooks/useApp'
 
 
 function WorkerAvailability(){

@@ -1,37 +1,31 @@
-import React, { useState , useEffect } from 'react'
-import type { Worker } from '../types/Worker'
-
+import React, { useState } from 'react'
+import type { Worker } from '../../types/Worker'
 
 interface WorkerFormProps {
-    selectedWorker:Worker | null,
-    onUpdateWorker:(value:Worker) => void
+    workers:Worker[],
+    onCreateWorker:(value:Worker) => void
 }
-function WorkerEdit({selectedWorker,onUpdateWorker}:WorkerFormProps) {
-    const [name,setName] = useState<string >(selectedWorker?.name ?? '')
-    const [email,setEmail] = useState<string>(selectedWorker?.email ?? '')
-    const [role,setRole] = useState<'worker' | 'manager' | 'admin' | 'owner' | 'accountant' | ''>(selectedWorker?.role ?? '')
-    const [status,setStatus] = useState<'available' | 'sick' | 'vacation' | 'inactive' | '' >(selectedWorker
-        ?.status ?? ''
-    )
+function WorkerForm({workers,onCreateWorker}:WorkerFormProps) {
+    
+    const [name,setName] = useState<string>('')
+    const [email,setEmail] = useState<string>('')
+    const [role,setRole] = useState<'worker' | 'manager' | 'admin' | 'owner' | 'accountant' | ''>('')
+    const [status,setStatus] = useState<'available' | 'sick' | 'vacation' | 'inactive' | ''>('')
 
     function handeSubmit(e:React.FormEvent){
         e.preventDefault()
-        if(!selectedWorker) return null
         if(name === '' ) return null
         if(email === '') return null
         if(role === '') return null
         if(status === '') return null
-        const updatedWorker = {
-        ...selectedWorker ,
+        const worker: Worker = {
+        id: workers.length + 1,
         name,
         email,
         role,
         status
         }
-        if(!updatedWorker){
-            return null
-        }
-        onUpdateWorker(updatedWorker)
+        onCreateWorker(worker)
         setName('')
         setEmail('')
         setRole('')
@@ -40,14 +34,10 @@ function WorkerEdit({selectedWorker,onUpdateWorker}:WorkerFormProps) {
     return
     }
 
-    useEffect (() => {
-        if(!selectedWorker) return ;
 
-        setName(selectedWorker.name);
-        setEmail(selectedWorker.email);
-        setRole(selectedWorker.role);
-        setStatus(selectedWorker.status);
-    },[selectedWorker])
+
+
+
   return (
     <div style={{
         display:'flex',
@@ -71,13 +61,13 @@ function WorkerEdit({selectedWorker,onUpdateWorker}:WorkerFormProps) {
         }}
         onSubmit={handeSubmit}
         >
-            <h2>Edit Form</h2>
+            <h2>Worker Form</h2>
             <label htmlFor="name">Name</label>
-            <input type="text" onChange={(e)=> setName(e.target.value)} value={name}  />
+            <input type="name" value={name} onChange={(e)=> setName(e.target.value)} placeholder='Worker Name' />
             <label htmlFor="name">Email</label>
-            <input type="text" value={email}  onChange={(e)=> setEmail(e.target.value)} />
+            <input type="email" value={email} placeholder='Email' onChange={(e)=> setEmail(e.target.value)} />
             <label htmlFor="name">Role</label>
-            <select onChange={(e)=>setRole(e.target.value as 'worker' | 'manager' | 'admin' | 'owner' | 'accountant')} value={role} name="selectRole" id="role">
+            <select value={role} onChange={(e)=>setRole(e.target.value as 'worker' | 'manager' | 'admin' | 'owner' | 'accountant')} name="selectRole" id="role">
                 <option value="">Select role</option>
                 <option value="worker">worker</option>
                 <option value="manager">manager</option>
@@ -86,18 +76,18 @@ function WorkerEdit({selectedWorker,onUpdateWorker}:WorkerFormProps) {
                 <option value="owner">owner</option>
             </select>
             <label htmlFor="name">Status</label>
-            <select name="status" id="status" value={status} onChange={(e)=>setStatus(e.target.value as 'available' | 'sick' | 'vacation' | 'inactive')}>
+            <select value={status} name="status" id="status" onChange={(e)=>setStatus(e.target.value as 'available' | 'sick' | 'vacation' | 'inactive')}>
                 <option value="">Select status</option>
                 <option value="available">available</option>
                 <option value="sick">sick</option>
                 <option value="vacation">vacation</option>
                 <option value="inactive">inactive</option>
             </select>
-            <button type='submit'>Save</button>
+            <button type='submit'>Create</button>
         </form>
         
     </div>
   )
 }
 
-export default WorkerEdit
+export default WorkerForm

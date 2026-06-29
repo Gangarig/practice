@@ -1,4 +1,4 @@
-import type { Worker } from '../types/Worker'
+import type { Worker } from '../../types/Worker'
 import StatusPanel from './StatusPanel'
 interface WorkerListProps {
     workers : Worker[],

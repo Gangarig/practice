@@ -1,6 +1,6 @@
-import type { Station } from "../types/Station"
-import type { Worker } from "../types/Worker"
-import type { Assignment } from "../types/Assignment"
+import type { Station } from '../../types/Station'
+import type { Worker } from "../../types/Worker"
+import type { Assignment } from "../../types/Assignment"
 import { type MouseEvent } from "react"
 interface GridCellProps{
   station:Station | null,

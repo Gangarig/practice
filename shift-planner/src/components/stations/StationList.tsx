@@ -1,4 +1,4 @@
-import type { Station } from '../types/Station'
+import type { Station } from '../../types/Station'
 import StationCard from './StationCard'
 interface StationListProps {
   stations : Station[],

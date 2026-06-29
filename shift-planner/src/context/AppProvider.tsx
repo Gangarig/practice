@@ -102,6 +102,13 @@ function AppProvider() {
         return
     }
 
+    function resetLocalData () {
+        localStorage.removeItem('workers');
+        localStorage.removeItem('stations');
+        localStorage.removeItem('assignments');
+        window.location.reload();
+    }
+
 
   return (
     <AppContext.Provider 
@@ -117,8 +124,8 @@ function AppProvider() {
         removeStation,
         createAssignment,
         updateAssignment,
-        removeAssignment
-    
+        removeAssignment,
+        resetLocalData
     }}
     
     ><Outlet/></AppContext.Provider>

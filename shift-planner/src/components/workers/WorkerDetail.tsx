@@ -1,6 +1,7 @@
-import type { Worker } from "../types/Worker"
-import type { Assignment } from "../types/Assignment"
+import type { Worker } from "../../types/Worker"
+import type { Assignment } from "../../types/Assignment"
 import { useState } from "react"
+
 interface WorkerDetailProps {
     worker : Worker |null ,
     onRemoveWorker:(value:Worker)=>void,

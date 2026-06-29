@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
-import type { Station } from '../types/Station'
-
+import type { Station } from '../../types/Station'
 interface StationFormProps {
     stations: Station[],
     onCreateStation:(value:Station)=>void

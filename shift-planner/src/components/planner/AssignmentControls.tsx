@@ -1,6 +1,6 @@
-import type { Station } from "../types/Station"
-import type { Worker } from "../types/Worker"
-import type { Assignment, Weekday } from "../types/Assignment"
+import type { Station } from "../../types/Station"
+import type { Worker } from "../../types/Worker"
+import type { Assignment, Weekday } from "../../types/Assignment"
 import { useState } from "react"
 
 interface AssignmentControlsProps {

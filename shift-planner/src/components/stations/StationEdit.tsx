@@ -1,5 +1,5 @@
 import React , {useEffect, useState} from 'react'
-import type { Station } from '../types/Station'
+import type { Station } from '../../types/Station'
 
 interface StationEditProps {
     selectedStation:Station | null,
