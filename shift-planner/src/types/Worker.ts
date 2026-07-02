@@ -8,3 +8,5 @@ export interface Worker {
     vacationDays?:number,
     plusHours?:number,
 }
+
+export type NewWorker = Omit<Worker, "id">;

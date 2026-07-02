@@ -2,26 +2,42 @@
 import { useEffect, useState } from 'react'
 import { AppContext } from './AppContext'
 import mockAssignments from '../data/mockAssignments'
-import mockWorkers from '../data/mockWorkers'
 import mockStations from '../data/mockStations'
-import type { Worker } from '../types/Worker'
+import type { Worker , NewWorker } from '../types/Worker'
 import type { Assignment } from '../types/Assignment'
 import type { Station } from '../types/Station'
 import { Outlet } from 'react-router-dom'
+import { supabase } from '../lib/supabase'
 
 
 
 
 
 function AppProvider() {
-    const [workers,setWorkers] = useState<Worker[]>(()=> {  
-        const savedWorkers = localStorage.getItem('workers');
-        return savedWorkers ? JSON.parse(savedWorkers) : mockWorkers
-    });
+    const [workers,setWorkers] = useState<Worker[]>([]);
+    const [loadingWorkers,setLoadingWorkers] = useState(false);
+    const [workersError , setWorkersError] = useState<string|null>(null)
     const [stations, setStations] = useState<Station[]>(() => {
     const savedStations = localStorage.getItem("stations");
     return savedStations ? JSON.parse(savedStations) : mockStations;
     });
+
+    
+    async function loadWorkers() {
+        setLoadingWorkers(true)
+
+        const {data , error} = await supabase.from('workers').select('*')
+
+        if(error) {
+            setWorkersError(error.message);
+            setLoadingWorkers(false)
+            return
+        }
+
+        setWorkers(data as Worker[]);
+        setLoadingWorkers(false);
+        return
+    }
 
     const [assignments, setAssignments] = useState<Assignment[]>(() => {
         const savedAssignments = localStorage.getItem("assignments");
@@ -34,27 +50,43 @@ function AppProvider() {
         localStorage.setItem('assignments',JSON.stringify(assignments))
     },[workers,stations,assignments])
 
-    function removeWorker(selectedWorker:Worker) {
+    useEffect(()=>{
+        loadWorkers();
+    },[])
+    
+    async function createWorker(newWorker:NewWorker) {
+        const {data,error} = await supabase.from('workers').insert(newWorker).select().single()    
+        if(error) {
+            console.log(error.message);
+            return
+        }
+        await loadWorkers();
+
+    }
+    async function removeWorker(selectedWorker:Worker) {
         // assignment validation
         const hasAssignment = assignments.some((item:Assignment) => item.workerId === selectedWorker.id)
         if(hasAssignment){
             console.log('Worker has assignment')
             return null
         }
-        setWorkers(prev => prev.filter(item => item.id !== selectedWorker.id))
-        return
+        const {error} = await supabase.from('workers').delete().eq('id',selectedWorker.id)
+
+        if(error) {
+            console.log(error.message);
+            return
+        }
+        await loadWorkers()
     }
-    function createWorker(newWorker:Worker) {
-        setWorkers(prev => [
-            ...prev ,
-            newWorker
-        ])
-        return
-    }
-    function updateWorker(worker:Worker) {
-        setWorkers(prev => 
-            prev.map((item) => item.id === worker.id ? worker : item)
-        )
+
+    async function updateWorker(worker:Worker) {
+        const {data,error} = await supabase.from('workers').update(worker).eq('id',worker.id);
+        if(error) {
+            console.log(error.message);
+            return
+        }
+
+        await loadWorkers();
         return
     }
     function createStation(newStation:Station) {

@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
-import type { Worker } from '../../types/Worker'
+import type { Worker,NewWorker } from '../../types/Worker'
 
 interface WorkerFormProps {
     workers:Worker[],
-    onCreateWorker:(value:Worker) => void
+    onCreateWorker:(value:NewWorker) => void
 }
 function WorkerForm({workers,onCreateWorker}:WorkerFormProps) {
     
@@ -18,8 +18,7 @@ function WorkerForm({workers,onCreateWorker}:WorkerFormProps) {
         if(email === '') return null
         if(role === '') return null
         if(status === '') return null
-        const worker: Worker = {
-        id: workers.length + 1,
+        const worker : NewWorker = {
         name,
         email,
         role,

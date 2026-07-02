@@ -4,7 +4,7 @@ import type { Station } from "../types/Station";
 import type { Assignment } from "../types/Assignment";
 
 export interface AppContextValue {
-    workers : Worker[],
+    workers : Worker[] ,
     stations : Station[],
     assignments : Assignment[],
 
