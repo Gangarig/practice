@@ -1,19 +1,19 @@
 import type { Station } from "../../types/Station"
 import type { Worker } from "../../types/Worker"
-import type { Assignment, Weekday } from "../../types/Assignment"
+import type { Assignment,NewAssignment, Weekday } from "../../types/Assignment"
 import { useState } from "react"
 
 interface AssignmentControlsProps {
     stations:Station[] | null,
     workers:Worker[] | null,
     assignments:Assignment[],
-    onCreateAssignment : (value:Assignment)=>void
+    onCreateAssignment : (value:NewAssignment)=>void
 }
 
 function AssignmentControls({stations,workers ,assignments,onCreateAssignment}:AssignmentControlsProps) {
 
-    const [selectedWorkerId,setSelectedWorkerId] = useState<number|''>('');
-    const [selectedStationId,setSelectedStationId] = useState<number|''>('');
+    const [selectedWorkerId,setSelectedWorkerId] = useState<string|''>('');
+    const [selectedStationId,setSelectedStationId] = useState<string|''>('');
     const [selectedDay,setSelectedDay] = useState<Weekday | ''>('') 
     const [note , setNote] = useState<string>('')
     function handleNote (note:string) {
@@ -44,9 +44,7 @@ function AssignmentControls({stations,workers ,assignments,onCreateAssignment}:A
             return console.log('worker is not available')
         }
 
-        const newId = assignments.length + 1;
-        const assignment: Assignment = {
-            id: newId,
+        const assignment: NewAssignment = {
             workerId: worker.id,
             stationId: station.id,
             date: selectedDay,
@@ -79,7 +77,7 @@ function AssignmentControls({stations,workers ,assignments,onCreateAssignment}:A
     >
         <select 
         onChange={(e)=>setSelectedStationId(
-            e.target.value === '' ? '' : Number(e.target.value)
+            e.target.value === '' ? '' : e.target.value
         )}
         name="selectStation" id="station" value={selectedStationId}>
             <option value={''}>Select a Station</option>
@@ -94,10 +92,10 @@ function AssignmentControls({stations,workers ,assignments,onCreateAssignment}:A
 
         <select 
         onChange={(e)=>setSelectedWorkerId(
-            e.target.value === '' ? '' : Number(e.target.value)
+            e.target.value === '' ? '' : e.target.value
         )}
         name="selectWorker" id="worker" value={selectedWorkerId}> 
-            <option value={''}>Select a Worker</option>
+        <option value={''}>Select a Worker</option>
             {workers && workers.map(worker => 
                 <option
                 key={worker.id}

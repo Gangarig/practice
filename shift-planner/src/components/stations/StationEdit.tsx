@@ -24,12 +24,14 @@ function StationEdit({selectedStation,onRemoveStation,onUpdateStation}:StationEd
             name: stationsName,
             active: stationStatus
         }
+        setStationName('')
         onUpdateStation(updatedStation)
         return
     }
 
     function handleRemove(selectedStation:Station | null) {
         if(!selectedStation) return null
+        setStationName('')
         onRemoveStation(selectedStation)
         return
     }
@@ -86,7 +88,7 @@ function StationEdit({selectedStation,onRemoveStation,onUpdateStation}:StationEd
                     />
                     Inactive
                     </label>
-                    <button type='submit'>Create Station</button>
+                    <button type='submit'>Save</button>
                 </form>
                 <button onClick={()=>handleRemove(selectedStation)}>Delete</button>
         </div>

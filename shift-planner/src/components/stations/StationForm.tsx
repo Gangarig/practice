@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
-import type { Station } from '../../types/Station'
+import type { Station, NewStation } from '../../types/Station'
 interface StationFormProps {
     stations: Station[],
-    onCreateStation:(value:Station)=>void
+    onCreateStation:(value:NewStation)=>void
 }
 
 
@@ -14,16 +14,13 @@ function StationForm({stations,onCreateStation}:StationFormProps) {
         e.preventDefault()
         if(stationsName === '') return null
 
-        const newStation :Station = {
-            id:stations.length+1,
+        const newStation :NewStation = {
             name:stationsName,
             active:stationStatus 
         }
-
-        onCreateStation(newStation);
         setStationName('')
         setStationStatus(true)
-        return
+        onCreateStation(newStation);
     }
 
   return (
@@ -46,7 +43,7 @@ function StationForm({stations,onCreateStation}:StationFormProps) {
         }}
         >
             <label htmlFor="">Station Name</label>
-            <input onChange={(e)=>setStationName(e.target.value)} type="text" />
+            <input onChange={(e)=>setStationName(e.target.value)} value={stationsName} type="text" />
             <label>
             <input
                 type="radio"

@@ -1,5 +1,4 @@
-
-import type { Station } from '../types/Station'
+import type { Station } from "../../types/Station"
 interface StationCardProps{
     station: Station,
     selectedStation:Station | null,
@@ -10,7 +9,7 @@ function StationCard({station,selectedStation, onSelectedStation}:StationCardPro
   return (
     <div 
     style={{
-        background:isSelected ? 'beige' : '#16171d',
+        background:isSelected ? 'beige' : 'white',
         cursor:'pointer'
     }}
     onClick={()=>onSelectedStation(station)}>

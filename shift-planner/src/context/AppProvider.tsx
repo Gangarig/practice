@@ -1,146 +1,182 @@
 
 import { useEffect, useState } from 'react'
 import { AppContext } from './AppContext'
-import mockAssignments from '../data/mockAssignments'
-import mockStations from '../data/mockStations'
 import type { Worker , NewWorker } from '../types/Worker'
-import type { Assignment } from '../types/Assignment'
-import type { Station } from '../types/Station'
+import type { Assignment , NewAssignment } from '../types/Assignment'
+import type { Station , NewStation } from '../types/Station'
 import { Outlet } from 'react-router-dom'
-import { supabase } from '../lib/supabase'
-
-
-
-
+import { createWorker , updateWorker , removeWorker , loadWorkers} from './workerService'
+import { loadStations,createStation,updateStation,removeStation } from './stationService'
+import { loadAssignments , createAssignment , updateAssignment,removeAssignment } from './assignmentService'
+import { notifications } from '@mantine/notifications';
 
 function AppProvider() {
     const [workers,setWorkers] = useState<Worker[]>([]);
     const [loadingWorkers,setLoadingWorkers] = useState(false);
     const [workersError , setWorkersError] = useState<string|null>(null)
-    const [stations, setStations] = useState<Station[]>(() => {
-    const savedStations = localStorage.getItem("stations");
-    return savedStations ? JSON.parse(savedStations) : mockStations;
-    });
-
-    
-    async function loadWorkers() {
-        setLoadingWorkers(true)
-
-        const {data , error} = await supabase.from('workers').select('*')
-
-        if(error) {
-            setWorkersError(error.message);
-            setLoadingWorkers(false)
-            return
-        }
-
-        setWorkers(data as Worker[]);
-        setLoadingWorkers(false);
-        return
-    }
-
-    const [assignments, setAssignments] = useState<Assignment[]>(() => {
-        const savedAssignments = localStorage.getItem("assignments");
-        return savedAssignments ? JSON.parse(savedAssignments) : mockAssignments;
-    });
-
-    useEffect(() => {
-        localStorage.setItem('workers',JSON.stringify(workers))
-        localStorage.setItem('stations',JSON.stringify(stations))
-        localStorage.setItem('assignments',JSON.stringify(assignments))
-    },[workers,stations,assignments])
+    const [stations, setStations] = useState<Station[]>([]);
+    const [loadingStations,setLoadingStations] = useState(false);
+    const [stationsError ,setStationsError] = useState<string|null>(null)
+    const [assignments, setAssignments] = useState<Assignment[]>([]);
+    const [loadingAssignments,setLoadingAssignments] = useState(false);
+    const [assignmentsError , setAssignmentsError] = useState<string|null>(null)
 
     useEffect(()=>{
-        loadWorkers();
+        refreshWorkers();
+        refreshStations();
+        refreshAssignments();
     },[])
-    
-    async function createWorker(newWorker:NewWorker) {
-        const {data,error} = await supabase.from('workers').insert(newWorker).select().single()    
-        if(error) {
-            console.log(error.message);
+
+
+    // assignments
+    async function refreshAssignments(){
+        try {
+        setLoadingAssignments(true)
+        setAssignmentsError(null)
+        const data = await loadAssignments();
+
+            setAssignments(data)
+        }
+        catch (error) {
+            setAssignmentsError('Could not load assignments')
+            return
+        } finally {
+            setLoadingAssignments(false)
+            }
+    }
+    async function handleCreateAssignment(newAssignment: NewAssignment) {
+        try {
+            setAssignmentsError(null)
+            await createAssignment(newAssignment);
+        }catch (error){
+            setAssignmentsError('Could not create new assignment')
             return
         }
-        await loadWorkers();
-
+            await refreshAssignments();
     }
-    async function removeWorker(selectedWorker:Worker) {
-        // assignment validation
-        const hasAssignment = assignments.some((item:Assignment) => item.workerId === selectedWorker.id)
-        if(hasAssignment){
-            console.log('Worker has assignment')
-            return null
-        }
-        const {error} = await supabase.from('workers').delete().eq('id',selectedWorker.id)
-
-        if(error) {
-            console.log(error.message);
+    async function handleUpdateAssignment(assignment:Assignment) {
+        try {
+            setAssignmentsError(null)
+            await updateAssignment(assignment);
+        }catch (error){
+            setAssignmentsError('Could not update assignment')
             return
         }
-        await loadWorkers()
+            await refreshAssignments();
+    }
+    async function handleRemoveAssignment(assignment:Assignment) {
+        try {
+            setAssignmentsError(null)
+            await removeAssignment(assignment);
+        }catch (error){
+            setAssignmentsError('Could not remove assignment')
+            return
+        }  
+            await refreshAssignments();
     }
 
-    async function updateWorker(worker:Worker) {
-        const {data,error} = await supabase.from('workers').update(worker).eq('id',worker.id);
-        if(error) {
-            console.log(error.message);
+    // stations
+    async function refreshStations() {
+        try {
+        setLoadingStations(true)
+        setStationsError(null)
+        const data = await loadStations()
+            setStations(data)
+        } catch {
+        setStationsError("Could not load stations")
+        } finally {
+        setLoadingStations(false)
+        }
+    }
+    async function handleUpdateStation(station:Station) {
+        try {
+            setStationsError(null)
+            await updateStation(station);
+        }catch (error){
+            setStationsError('Could not update station')
             return
         }
+            await refreshStations();
+    }
+    async function handleCreateStation(newStation:NewStation) {
+        try {
+            setStationsError(null)
+            await createStation(newStation);
+        }catch (error){
+            setStationsError('Could not create station')
+            return
+        } 
+            await refreshStations();
+    }
+    async function handleRemoveStation(station:Station) {
+        try {
+            setStationsError(null)
+            const hasAssignmentsOnStation = assignments.some(item=> item.stationId === station.id)
+            if(hasAssignmentsOnStation) {
+                setStationsError('station has assignments')
+                return null
+            }
+            await removeStation(station);
+        } catch (error) {
+            setStationsError('Could not remove station')
+            return
+        } 
+            await refreshStations();
+    }
 
-        await loadWorkers();
-        return
-    }
-    function createStation(newStation:Station) {
-        setStations(prev=>[
-            ...prev,
-            newStation
-        ])
-        return
-    }
-    function updateStation(station:Station) {
-        setStations(prev=>
-        prev.map((item:Station) => item.id === station.id ? 
-        station : item,
-    ))
-    return
-    }
-    function removeStation (station:Station) {
-        const hasAssignmentsOnStation = assignments.some(item=> item.stationId === station.id)
-        if(hasAssignmentsOnStation) {
-            console.log('station has assignments')
-            return null
+    // workers     
+    async function refreshWorkers() {
+        try {
+            setLoadingWorkers(true)
+            setWorkersError(null)
+            const data = await loadWorkers()
+            setWorkers(data)
+
+        } catch {
+        setWorkersError("Could not load workers")
+        } finally {
+        setLoadingWorkers(false)
         }
-        setStations(prev=> prev.filter(
-            item => item.id !== station.id)
-        )
-        return
     }
-    function createAssignment(assignment: Assignment) {
-        setAssignments((prevAssignments:Assignment[]) => [
-            ...prevAssignments,
-            assignment
-        ]);
+    async function handleRemoveWorker(selectedWorker:Worker) {
+            setWorkersError(null)
+            const hasAssignment = assignments.some((item:Assignment) => item.workerId === selectedWorker.id)
+            if(hasAssignment){
+                setWorkersError('Worker has assignment')
+                return null
+            }
+        try {
+            await removeWorker(selectedWorker);
+        } catch (error) {
+            setWorkersError('Could not delete worker')
+            return
+        }   
+            await refreshWorkers();
     }
-    function updateAssignment(assignment:Assignment) {
-    setAssignments(prevAssignments =>
-    prevAssignments.map(item =>
-        item.id === assignment.id
-        ? assignment
-        : item
-    )
-    )
+    async function handleUpdateWorker(worker:Worker) {
+        try {
+            setWorkersError(null)
+            await updateWorker(worker);
+        }catch (error){
+            setWorkersError('Could not update worker')
+            return
+        } 
+            await refreshWorkers();
     }
-    function removeAssignment(assignment:Assignment) {
-        setAssignments(prevAssignments => prevAssignments.filter(item => item.id !== assignment.id))
-        return
+    async function handleCreateWorker(newWorker:NewWorker) {
+        try {
+            setWorkersError(null)
+            await createWorker(newWorker);
+            notifications.show({
+            title: 'Worker created',
+            message: 'The worker was added successfully',
+            });
+        }catch (error){
+            setWorkersError('Could not create worker')
+            return
+        }  
+            await refreshWorkers();
     }
-
-    function resetLocalData () {
-        localStorage.removeItem('workers');
-        localStorage.removeItem('stations');
-        localStorage.removeItem('assignments');
-        window.location.reload();
-    }
-
 
   return (
     <AppContext.Provider 
@@ -148,19 +184,25 @@ function AppProvider() {
         workers,
         assignments,
         stations,
-        createWorker,
-        updateWorker,
-        removeWorker,
-        createStation,
-        updateStation,
-        removeStation,
-        createAssignment,
-        updateAssignment,
-        removeAssignment,
-        resetLocalData
+        createWorker:handleCreateWorker,
+        updateWorker:handleUpdateWorker,
+        removeWorker:handleRemoveWorker,
+        createStation:handleCreateStation,
+        updateStation:handleUpdateStation,
+        removeStation:handleRemoveStation,
+        createAssignment:handleCreateAssignment,
+        updateAssignment:handleUpdateAssignment,
+        removeAssignment:handleRemoveAssignment,
+        loadingWorkers,
+        workersError,
+        loadingStations,
+        stationsError,
+        loadingAssignments,
+        assignmentsError
     }}
-    
-    ><Outlet/></AppContext.Provider>
+    >
+    <Outlet/>
+    </AppContext.Provider>
   )
 }
 

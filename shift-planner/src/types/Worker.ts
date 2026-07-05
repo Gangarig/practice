@@ -1,5 +1,5 @@
 export interface Worker {
-    id:number,
+    id:string,
     name:string,
     status: 'available' | 'sick' | 'vacation' | 'inactive'
     role: 'worker' | 'manager' | 'admin' | 'owner' | 'accountant',

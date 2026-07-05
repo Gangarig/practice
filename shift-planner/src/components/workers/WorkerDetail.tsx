@@ -20,7 +20,7 @@ function WorkerDetail({worker,onRemoveWorker,setSelectedWorker,assignments,onCha
     return
   }
 
-  function getWorkerAssignmentCount(workerId:number | undefined) {
+  function getWorkerAssignmentCount(workerId:string | undefined) {
     return assignments.filter(item => item.workerId === workerId).length
   }
 

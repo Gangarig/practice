@@ -8,6 +8,7 @@ import WorkerForm from "../components/workers/WorkerForm"
 import useApp from "../hooks/useApp"
 import type { Worker } from "../types/Worker"
 import Search from "../components/Search"
+
 function WorkersPage() {
   const [search,setSearch]=useState<string>('')
   const [selectedWorker,setSelectedWorker] = useState<Worker | null>(null)
@@ -19,8 +20,8 @@ function WorkersPage() {
       const {workers,
           assignments,
           createWorker,
-          updateWorker,
           removeWorker,
+          updateWorker,
       } = useApp()
 
   function handleUpdateWorker(worker:Worker) {
