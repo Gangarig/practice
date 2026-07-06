@@ -30,7 +30,6 @@ function WorkerForm({onCreateWorker}:WorkerFormProps) {
         setEmail('')
         setRole('worker')
         setStatus('available')
-    console.log('Submitted')
     return
     }
 
