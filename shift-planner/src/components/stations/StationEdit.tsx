@@ -1,5 +1,6 @@
 import React , {useEffect, useState} from 'react'
 import type { Station } from '../../types/Station'
+import { Button, Group, Paper, SegmentedControl, Stack, Text, TextInput } from '@mantine/core'
 
 interface StationEditProps {
     selectedStation:Station | null,
@@ -44,54 +45,24 @@ function StationEdit({selectedStation,onRemoveStation,onUpdateStation}:StationEd
 
 
 
+  if (!selectedStation) return null
   return (
-        <div style={{
-                display:'flex',
-                flexDirection:'column',
-                border:'1px solid white',
-                borderRadius:'10px',
-                justifyContent:'center',
-                alignItems:'center',
-                padding:'20px'
-            }}>
-                <h2>Station Edit</h2>
-                <form onSubmit={handleUpdate}
-                style={{
-                    display:'flex',
-                    flexDirection:'column',
-                    alignItems:'center',
-                    justifyContent:'center',
-                    
-                }}
-                >
-                    <label htmlFor="">Station Name</label>
-                    <input
-                    value={stationsName}
-                    placeholder={stationsName}
-                    onChange={(e)=>setStationName(e.target.value)} type="text" />
-                    <label>
-                    <input
-                        type="radio"
-                        name="stationStatus"
-                        checked={stationStatus === true}
-                        onChange={() => setStationStatus(true)}
-                    />
-                    Active
-                    </label>
-
-                    <label>
-                    <input
-                        type="radio"
-                        name="stationStatus"
-                        checked={stationStatus === false}
-                        onChange={() => setStationStatus(false)}
-                    />
-                    Inactive
-                    </label>
-                    <button type='submit'>Save</button>
-                </form>
-                <button onClick={()=>handleRemove(selectedStation)}>Delete</button>
-        </div>
+    <Paper withBorder p="lg">
+      <form onSubmit={handleUpdate}>
+        <Stack>
+          <Text fw={600}>Edit station</Text>
+          <TextInput required label="Station name" value={stationsName}
+            onChange={(e) => setStationName(e.currentTarget.value)} />
+          <SegmentedControl fullWidth value={stationStatus ? 'active' : 'inactive'}
+            onChange={(value) => setStationStatus(value === 'active')}
+            data={[{ label: 'Active', value: 'active' }, { label: 'Inactive', value: 'inactive' }]} />
+          <Group justify="space-between">
+            <Button color="red" variant="subtle" type="button" onClick={() => handleRemove(selectedStation)}>Delete station</Button>
+            <Button type="submit" variant="light">Save changes</Button>
+          </Group>
+        </Stack>
+      </form>
+    </Paper>
   )
 }
 

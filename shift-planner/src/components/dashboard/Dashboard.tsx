@@ -1,106 +1,161 @@
-
-import type { Worker } from '../../types/Worker'
+import {
+  Avatar,
+  Badge,
+  Group,
+  Paper,
+  Progress,
+  SimpleGrid,
+  Stack,
+  Text,
+  ThemeIcon,
+  Title,
+} from '@mantine/core'
 import useApp from '../../hooks/useApp'
 
-function Dashboard() {
-  const {
-    workers ,
-    stations,
-    assignments,
-  } = useApp()
+const statusColors = {
+  available: 'green',
+  sick: 'red',
+  vacation: 'yellow',
+  inactive: 'gray',
+} as const
 
+interface MetricCardProps {
+  label: string
+  value: number
+  detail: string
+  symbol: string
+  color: string
+}
 
-  const totalVacationDaysAndPlusHours = workers.reduce<Record<string,number>>((sum,worker) =>{
-    sum.totalVacationDays = (sum.totalVacationDays ?? 0) + (worker?.vacationDays ?? 0);
-    sum.totalPlusHours = (sum.totalPlusHours ?? 0) + (worker?.plusHours ?? 0);
-    return sum
-  },{
-    totalVacationDays:0,
-    totalPlusHours:0,
-  })
-  const totalInactiveStations = stations.filter(
-    station => !station.active
-  ).length
-  const workerCounts = workers.reduce((sum, worker) => {
-    sum[worker.status] = (sum[worker.status] ?? 0) + 1;
-    return sum
-  }, {
-    available: 0,
-    sick: 0,
-    vacation: 0,
-    inactive: 0,
-  })
-
-  const activeStation = stations.filter(item => item.active).length
-
-  const workersWithoutAssignments : Worker[] = workers.filter(worker => 
-    !assignments.some(assignment => assignment.workerId === worker.id)
+function MetricCard({ label, value, detail, symbol, color }: MetricCardProps) {
+  return (
+    <Paper withBorder p="lg">
+      <Group justify="space-between" wrap="nowrap">
+        <Stack gap={4}>
+          <Text size="sm" c="dimmed">{label}</Text>
+          <Text fz={30} fw={700} lh={1}>{value}</Text>
+          <Text size="xs" c="dimmed">{detail}</Text>
+        </Stack>
+        <ThemeIcon size={44} radius="md" color={color} variant="light">
+          <Text fw={800}>{symbol}</Text>
+        </ThemeIcon>
+      </Group>
+    </Paper>
   )
-  const statisticAssignments = assignments.reduce<Record<number, number>>((sum, assignment) => {
-    sum[assignment.workerId] = (sum[assignment.workerId] ?? 0) + 1;
+}
+
+function Dashboard() {
+  const { workers, stations, assignments } = useApp()
+
+  const totals = workers.reduce(
+    (sum, worker) => ({
+      vacationDays: sum.vacationDays + (worker.vacationDays ?? 0),
+      plusHours: sum.plusHours + (worker.plusHours ?? 0),
+    }),
+    { vacationDays: 0, plusHours: 0 },
+  )
+
+  const workerCounts = workers.reduce<Record<keyof typeof statusColors, number>>(
+    (sum, worker) => {
+      sum[worker.status] += 1
+      return sum
+    },
+    { available: 0, sick: 0, vacation: 0, inactive: 0 },
+  )
+
+  const activeStations = stations.filter((station) => station.active).length
+  const workersWithoutAssignments = workers.filter(
+    (worker) => !assignments.some((assignment) => assignment.workerId === worker.id),
+  )
+  const assignmentCounts = assignments.reduce<Record<string, number>>((sum, assignment) => {
+    sum[assignment.workerId] = (sum[assignment.workerId] ?? 0) + 1
     return sum
-  },{});
-  const sortedStatistic = Object.entries(statisticAssignments).sort((a,b)=> b[1] - a[1])
-  const lastItemIndex = sortedStatistic.length-1;
-
-  function findWorkerById(workerId:number) {
-    return workers.find(worker => worker.id === workerId)
-  }
-
-  const mostLoadedWorker:Worker | undefined = sortedStatistic.length > 0 ? findWorkerById(Number(sortedStatistic[0][0])) : undefined;
-  const  leastLoadedWorker :Worker | undefined =  
-  workersWithoutAssignments.length > 0 ? 
-  workersWithoutAssignments[0] : sortedStatistic.length > 0 ?
-                                  findWorkerById(Number(sortedStatistic[lastItemIndex][0])) : 
-                                  undefined
-
+  }, {})
+  const rankedWorkers = workers
+    .map((worker) => ({ worker, count: assignmentCounts[worker.id] ?? 0 }))
+    .sort((a, b) => b.count - a.count)
+  const mostLoaded = rankedWorkers[0]
+  const leastLoaded = [...rankedWorkers].sort((a, b) => a.count - b.count)[0]
 
   return (
-    <div
-    style={{display:'flex',
-          flexDirection:'column',
-          justifyContent:'center',
-          alignItems:'center',
-          padding:'10px',
-          border:'1px solid white',
-          borderRadius:'10px'
-    }}
-    >
-      <h2>Dashboard</h2>
+    <Stack gap="lg">
       <div>
-        <h2>Stat</h2>
-          <div>
-            <h3>Worker --- {workers.length}</h3>
-            <p>available Workers - {workerCounts.available}</p>
-            <p>sick Workers - {workerCounts.sick}</p>
-            <p>vacation Workers - {workerCounts.vacation}</p>
-            <p>inactive Workers - {workerCounts.inactive}</p>          
-          </div>
-          <div>
-            <h3>Stations --- {stations.length}</h3>
-            <p>Active Stations - {activeStation}</p>
-          </div>
-          <div>
-            <h3>Assignments --- {assignments.length}</h3>
-          </div>
-          <div>
-            <h3>Workers Without assignments --- </h3>
-            {workersWithoutAssignments.length > 0 ? 
-                workersWithoutAssignments.map(item => 
-                <p key={item.id}>{item.name}</p>):
-                'list empty' }
-          </div>
-          <div>
-            {mostLoadedWorker && <p>Most Loaded Worker {mostLoadedWorker.name}</p> }
-            {leastLoadedWorker && <p>Least Loaded Worker {leastLoadedWorker.name}</p> }
-          </div>
-          <div>
-            <p>Total Vacation Days ---{totalVacationDaysAndPlusHours.totalVacationDays} </p>
-            <p>Total Plus Hours ---{totalVacationDaysAndPlusHours.totalPlusHours} </p>
-            <p>Inactive Stations --- {totalInactiveStations}</p>
-          </div>
+        <Title order={1}>Dashboard</Title>
+        <Text c="dimmed">A quick look at this week's team and station coverage.</Text>
       </div>
-    </div>
+
+      <SimpleGrid cols={{ base: 1, xs: 2, lg: 4 }}>
+        <MetricCard label="Team members" value={workers.length}
+          detail={`${workerCounts.available} available`} symbol="W" color="blue" />
+        <MetricCard label="Active stations" value={activeStations}
+          detail={`${stations.length - activeStations} inactive`} symbol="S" color="green" />
+        <MetricCard label="Assignments" value={assignments.length}
+          detail={`${workersWithoutAssignments.length} workers unassigned`} symbol="A" color="blue" />
+        <MetricCard label="Overtime" value={totals.plusHours}
+          detail={`${totals.vacationDays} vacation days`} symbol="H" color="orange" />
+      </SimpleGrid>
+
+      <SimpleGrid cols={{ base: 1, md: 2 }}>
+        <Paper withBorder p="lg">
+          <Stack>
+            <div>
+              <Text fw={700}>Team availability</Text>
+              <Text size="sm" c="dimmed">Current status across the whole team</Text>
+            </div>
+            {Object.entries(workerCounts).map(([status, count]) => {
+              const percentage = workers.length ? (count / workers.length) * 100 : 0
+              return (
+                <Stack key={status} gap={5}>
+                  <Group justify="space-between">
+                    <Badge color={statusColors[status as keyof typeof statusColors]} variant="light">{status}</Badge>
+                    <Text size="sm" fw={600}>{count}</Text>
+                  </Group>
+                  <Progress value={percentage} color={statusColors[status as keyof typeof statusColors]} size="sm" />
+                </Stack>
+              )
+            })}
+          </Stack>
+        </Paper>
+
+        <Paper withBorder p="lg">
+          <Stack>
+            <div>
+              <Text fw={700}>Workload</Text>
+              <Text size="sm" c="dimmed">Assignment balance for this week</Text>
+            </div>
+            {mostLoaded ? (
+              <>
+                <Group>
+                  <Avatar color="blue">{mostLoaded.worker.name.slice(0, 2).toUpperCase()}</Avatar>
+                  <div style={{ flex: 1 }}>
+                    <Text size="xs" c="dimmed">Most assigned</Text>
+                    <Text fw={600}>{mostLoaded.worker.name}</Text>
+                  </div>
+                  <Badge>{mostLoaded.count} shifts</Badge>
+                </Group>
+                <Group>
+                  <Avatar color="gray">{leastLoaded.worker.name.slice(0, 2).toUpperCase()}</Avatar>
+                  <div style={{ flex: 1 }}>
+                    <Text size="xs" c="dimmed">Least assigned</Text>
+                    <Text fw={600}>{leastLoaded.worker.name}</Text>
+                  </div>
+                  <Badge color="gray">{leastLoaded.count} shifts</Badge>
+                </Group>
+              </>
+            ) : (
+              <Text c="dimmed" size="sm">No workers to summarize yet.</Text>
+            )}
+            <Text size="sm" c="dimmed" mt="xs">
+              {workersWithoutAssignments.length === 0
+                ? 'Everyone has at least one assignment.'
+                : `${workersWithoutAssignments.map((worker) => worker.name).join(', ')} ${
+                    workersWithoutAssignments.length === 1 ? 'has' : 'have'
+                  } no assignments.`}
+            </Text>
+          </Stack>
+        </Paper>
+      </SimpleGrid>
+    </Stack>
   )
 }
 

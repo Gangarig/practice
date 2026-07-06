@@ -1,5 +1,6 @@
 import React, { useState , useEffect } from 'react'
 import type { Worker } from '../../types/Worker'
+import { Button, Paper, Select, Stack, Text, TextInput } from '@mantine/core'
 
 
 interface WorkerFormProps {
@@ -49,54 +50,20 @@ function WorkerEdit({selectedWorker,onUpdateWorker}:WorkerFormProps) {
         setStatus(selectedWorker.status);
     },[selectedWorker])
   return (
-    <div style={{
-        display:'flex',
-        alignItems:'center',
-        justifyContent:'center',
-        borderRadius:'10px',
-        padding:'10px',
-        flexDirection:'column',
-        gap:'10px',
-        width:'100%'
-    }}>
-        <form
-        style={{
-        display:'flex',
-        border:'1px solid white',
-        borderRadius:'10px',
-        padding:'10px',
-        flexDirection:'column',
-        gap:'10px',
-        width:'70%'
-        }}
-        onSubmit={handeSubmit}
-        >
-            <h2>Edit Form</h2>
-            <label htmlFor="name">Name</label>
-            <input type="text" onChange={(e)=> setName(e.target.value)} value={name}  />
-            <label htmlFor="name">Email</label>
-            <input type="text" value={email}  onChange={(e)=> setEmail(e.target.value)} />
-            <label htmlFor="name">Role</label>
-            <select onChange={(e)=>setRole(e.target.value as 'worker' | 'manager' | 'admin' | 'owner' | 'accountant')} value={role} name="selectRole" id="role">
-                <option value="">Select role</option>
-                <option value="worker">worker</option>
-                <option value="manager">manager</option>
-                <option value="admin">admin</option>
-                <option value="accountant">accountant</option>
-                <option value="owner">owner</option>
-            </select>
-            <label htmlFor="name">Status</label>
-            <select name="status" id="status" value={status} onChange={(e)=>setStatus(e.target.value as 'available' | 'sick' | 'vacation' | 'inactive')}>
-                <option value="">Select status</option>
-                <option value="available">available</option>
-                <option value="sick">sick</option>
-                <option value="vacation">vacation</option>
-                <option value="inactive">inactive</option>
-            </select>
-            <button type='submit'>Save</button>
-        </form>
-        
-    </div>
+    <Paper withBorder p="lg">
+      <form onSubmit={handeSubmit}>
+        <Stack>
+          <Text fw={600}>Edit worker</Text>
+          <TextInput required label="Name" value={name} onChange={(e) => setName(e.currentTarget.value)} />
+          <TextInput required type="email" label="Email" value={email} onChange={(e) => setEmail(e.currentTarget.value)} />
+          <Select required label="Role" value={role} data={['worker', 'manager', 'admin', 'accountant', 'owner']}
+            onChange={(value) => setRole((value ?? '') as typeof role)} />
+          <Select required label="Status" value={status} data={['available', 'sick', 'vacation', 'inactive']}
+            onChange={(value) => setStatus((value ?? '') as typeof status)} />
+          <Button type="submit" variant="light">Save changes</Button>
+        </Stack>
+      </form>
+    </Paper>
   )
 }
 

@@ -1,34 +1,34 @@
 
 import Sidebar from '../components/layout/Sidebar'
 import Header from '../components/layout/Header'
-import { AppShell, Burger,Group,Title } from '@mantine/core'
+import TopNavigation from '../components/layout/TopNavigation'
+import { AppShell, Burger, Drawer, Group, Text } from '@mantine/core'
 import { Outlet } from 'react-router-dom'
 import { useDisclosure } from '@mantine/hooks'
 
 function AppLayout() {
-  const [opened , {toggle}] = useDisclosure();
+  const [opened, { toggle, close }] = useDisclosure();
   return (
     <AppShell
-      header={{ height: 60 }}
-      navbar={{ width: 240, 
-        breakpoint: 'sm',
-        collapsed : {mobile:!opened},
-      }}
-      padding="md"
+      header={{ height: 68 }}
+      padding={{ base: 'sm', sm: 'lg' }}
     >
       <AppShell.Header>
-        <Group h="100%" px="md" justify='space-between'>
-          <Burger opened={opened} onClick={toggle} hiddenFrom="sm" size="sm" />
+        <Group h="100%" px={{ base: 'md', sm: 'xl' }} justify="space-between" wrap="nowrap">
+          <Group wrap="nowrap">
+            <Burger opened={opened} onClick={toggle} hiddenFrom="md" size="sm" />
+            <Text fw={700} size="lg">Shift Planner</Text>
+          </Group>
+          <TopNavigation />
           <Header/>
-          {!opened && <Title order={3}>Shift Planner</Title> }
         </Group>
       </AppShell.Header>
-      <AppShell.Navbar>
-        <Sidebar/>
-      </AppShell.Navbar>
       <AppShell.Main>
         <Outlet />
       </AppShell.Main>
+      <Drawer opened={opened} onClose={close} title="Navigation" size="xs" hiddenFrom="md">
+        <Sidebar onNavigate={close} />
+      </Drawer>
     </AppShell>
   )
 }

@@ -4,16 +4,11 @@ interface SortProps {
 }
 function WorkerSort({sortOrder,onSort}:SortProps) {
   return (
-    <div>
-      <h2>WorkerSort</h2>
-      <select value={sortOrder} onChange={(e)=>onSort(e.target.value as 'Default' | 'Name A-Z' | 'Name Z-A' | 'Status')} name="workerSort" id="sort">
-        <option value="Default">Default</option>
-        <option value="Name A-Z">Name A-Z</option>
-        <option value="Name Z-A">Name Z-A</option>
-        <option value="Status">Status</option>
-      </select>
-    </div>
+    <Select aria-label="Sort workers" value={sortOrder}
+      data={['Default', 'Name A-Z', 'Name Z-A', 'Status']}
+      onChange={(value) => value && onSort(value as SortProps['sortOrder'])} />
   )
 }
 
 export default WorkerSort
+import { Select } from '@mantine/core'

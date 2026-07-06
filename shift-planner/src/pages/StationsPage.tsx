@@ -8,11 +8,13 @@ import StationSort from '../components/stations/StationSort';
 import StationList from '../components/stations/StationList';
 import StationDetail from '../components/stations/StationDetail';
 import StationEdit from '../components/stations/StationEdit';
-import { LoadingOverlay, Box } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { Badge, Box, Button, Group, LoadingOverlay, Modal, Paper, SimpleGrid, Stack, Text, Title } from '@mantine/core';
 
 function StationsPage() {
     const [selectedStation , setSelectedStation] = useState<Station | null>(null)
     const [search,setSearch]=useState<string>('')
+    const [createOpened, { open: openCreate, close: closeCreate }] = useDisclosure(false)
     const {
         sortedStations,
         sortOrderStation,
@@ -27,35 +29,34 @@ function StationsPage() {
         loadingStations,
     } = useApp()
   return (
-    <>
-        <Box pos="relative">
+        <Box pos="relative" className="page-container">
             <LoadingOverlay visible={loadingStations} loaderProps={{ children: 'Loading...' }} />
-            <Search search={search} onSearch={setSearch}/>
-            <StationSort
-            sortOrderStation={sortOrderStation} 
-            onSortStation={setSortOrderStation}
-            />
-            <StationList 
-            stations={sortedStations}
-            selectedStation={selectedStation}
-            onSelectedStation={setSelectedStation}
-            />
-            <StationDetail 
-            assignments={assignments}
-            selectedStation={selectedStation}
-            onSelectedStation={setSelectedStation}
-            />
-            <StationForm
-            stations={stations}
-            onCreateStation={createStation}
-            />
-            <StationEdit 
-            selectedStation={selectedStation}
-            onUpdateStation={updateStation}
-            onRemoveStation={removeStation}
-            />
+            <Stack gap="lg">
+              <Group justify="space-between" align="flex-end">
+                <div>
+                  <Group gap="xs"><Title order={1}>Stations</Title><Badge variant="light">{stations.length}</Badge></Group>
+                  <Text c="dimmed">Organize the places your team works.</Text>
+                </div>
+                <Button onClick={openCreate}>Add station</Button>
+              </Group>
+              <Paper withBorder p="md">
+                <SimpleGrid cols={{ base: 1, sm: 2 }}>
+                  <Search search={search} onSearch={setSearch}/>
+                  <StationSort sortOrderStation={sortOrderStation} onSortStation={setSortOrderStation} />
+                </SimpleGrid>
+              </Paper>
+              <SimpleGrid cols={{ base: 1, md: selectedStation ? 2 : 1 }}>
+                <StationList stations={sortedStations} selectedStation={selectedStation} onSelectedStation={setSelectedStation} />
+                {selectedStation && <Stack>
+                  <StationDetail assignments={assignments} selectedStation={selectedStation} onSelectedStation={setSelectedStation} />
+                  <StationEdit selectedStation={selectedStation} onUpdateStation={updateStation} onRemoveStation={removeStation} />
+                </Stack>}
+              </SimpleGrid>
+            </Stack>
+            <Modal opened={createOpened} onClose={closeCreate} title="Add station" centered>
+              <StationForm stations={stations} onCreateStation={createStation} />
+            </Modal>
         </Box>
-    </>
   )
 }
 export default StationsPage

@@ -1,5 +1,6 @@
-import type { Station } from "../types/Station"
-import type { Assignment } from "../types/Assignment"
+import type { Station } from "../../types/Station"
+import type { Assignment } from "../../types/Assignment"
+import { Badge, Button, Group, Paper, Stack, Text, Title } from '@mantine/core'
 
 
 interface StationDetailProps{
@@ -14,34 +15,25 @@ function StationDetail({ assignments,selectedStation , onSelectedStation}:Statio
         const stationAssignment = assignments.filter(assignment => 
         assignment.stationId === selectedStation?.id
         )
+  if (!selectedStation) return null
   return (
-    <div style={{
-        display:'flex',
-      justifyContent:'center',
-      alignItems:'center',
-      flexDirection:'column',
-      border:'1px solid white' ,
-      borderRadius:'15px',
-      gap:'5px',
-      padding:'10px' ,
-    }}  >
-        <h2>Station Detail</h2>
-        <h2>{selectedStation?.name}</h2>
-        {selectedStation && <p>Station Status - {selectedStation?.active ? 'Active' :' Inactive'}</p> }
-        <button
-        style={{width:'100px'}}
-           onClick={()=>onSelectedStation(null)}
-        >Clear</button>
-        {stationAssignment && stationAssignment?.map(assignment => 
-            <div key={assignment.id}>
-                <h2>Assignment ID : {assignment.id}</h2>
-                <p>Date - {assignment.date}</p>
-                <p>Station ID - {assignment.stationId}</p>
-                <p>Worker ID - {assignment.workerId}</p>
-                {assignment.note && <p>Note - {assignment.note}</p>}
-            </div>
+    <Paper withBorder p="lg">
+      <Stack>
+        <Group justify="space-between">
+          <Title order={3}>{selectedStation.name}</Title>
+          <Badge color={selectedStation.active ? 'green' : 'gray'}>{selectedStation.active ? 'Active' : 'Inactive'}</Badge>
+        </Group>
+        <Text size="sm" c="dimmed">{stationAssignment.length} scheduled assignment{stationAssignment.length === 1 ? '' : 's'}</Text>
+        {stationAssignment.map((assignment) =>
+          <Paper key={assignment.id} withBorder p="sm">
+            <Text fw={600}>{assignment.date}</Text>
+            <Text size="sm" c="dimmed">Worker ID: {assignment.workerId}</Text>
+            {assignment.note && <Text size="sm">{assignment.note}</Text>}
+          </Paper>
         )}
-    </div>
+        <Button variant="default" onClick={() => onSelectedStation(null)}>Close</Button>
+      </Stack>
+    </Paper>
   )
 }
 

@@ -1,5 +1,6 @@
 import type { Worker } from '../../types/Worker'
 import WorkerCard from './WorkerCard'
+import { SimpleGrid, Stack, Text } from '@mantine/core'
 interface StatusPanelProps {
     title:'available' | 'not available'
     workers:Worker [],
@@ -8,14 +9,16 @@ interface StatusPanelProps {
 }
 function StatusPanel({title,workers,selectedWorker,onSelectWorker}:StatusPanelProps) {
   return (
-    <div> 
-        <h2>{title}</h2>
+    <Stack gap="sm">
+        <Text fw={700} tt="capitalize">{title} ({workers.length})</Text>
+        <SimpleGrid cols={{ base: 1, sm: 2, lg: 3 }}>
         {workers.map(worker => <WorkerCard 
         key={worker.id}
         worker={worker} 
         selectedWorker={selectedWorker} 
         onSelectWorker={onSelectWorker} />)}
-    </div>
+        </SimpleGrid>
+    </Stack>
   )
 }
 

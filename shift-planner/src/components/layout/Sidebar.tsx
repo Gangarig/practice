@@ -1,12 +1,13 @@
-import { Divider, NavLink, Stack, Title } from '@mantine/core';
+import { Divider, NavLink, Stack, Text } from '@mantine/core';
 import { Link, useLocation } from 'react-router-dom';
 import currentUser from '../../data/mockCurrentUser';
 import { Fragment } from 'react/jsx-runtime';
 import navLinks from '../../data/navigation';
 interface SidebarProps {
-
+  onNavigate?: () => void
 }
-function Sidebar({}:SidebarProps) {
+
+function Sidebar({ onNavigate }: SidebarProps) {
   const location = useLocation()
   const user = currentUser
   const items = navLinks
@@ -14,19 +15,20 @@ function Sidebar({}:SidebarProps) {
     .map((link) => (
     <Fragment key={link.to}>    
       {link.label === 'Settings' ? <Divider my={'sm'} size={'sm'}/> : null}
-      <NavLink
+      <NavLink variant="light"
         component={Link}
         to={link.to}
         label={link.label}
         active={location.pathname === link.to}
+        onClick={onNavigate}
         // leftSection={<link.icon size={16}/>
       />
     </Fragment>))
 
   return (
-    <Stack gap={'xs'} p='sm'>
-        <Title order={3}>Shift Planner</Title>
-        <Divider size={'sm'} my={'sm'}/>
+    <Stack gap="xs">
+        <Text c="dimmed" fw={700} size="xs" tt="uppercase" px="sm" mt="sm">Workspace</Text>
+        <Divider my="xs"/>
         {items}
     </Stack>
   )

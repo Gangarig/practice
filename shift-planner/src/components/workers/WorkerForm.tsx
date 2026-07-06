@@ -1,16 +1,17 @@
 import React, { useState } from 'react'
 import type { Worker,NewWorker } from '../../types/Worker'
+import { Button, Select, Stack, TextInput } from '@mantine/core'
 
 interface WorkerFormProps {
     workers:Worker[],
     onCreateWorker:(value:NewWorker) => void
 }
-function WorkerForm({workers,onCreateWorker}:WorkerFormProps) {
+function WorkerForm({onCreateWorker}:WorkerFormProps) {
     
     const [name,setName] = useState<string>('')
     const [email,setEmail] = useState<string>('')
-    const [role,setRole] = useState<'worker' | 'manager' | 'admin' | 'owner' | 'accountant' | ''>('')
-    const [status,setStatus] = useState<'available' | 'sick' | 'vacation' | 'inactive' | ''>('')
+    const [role,setRole] = useState<'worker' | 'manager' | 'admin' | 'owner' | 'accountant' | ''>('worker')
+    const [status,setStatus] = useState<'available' | 'sick' | 'vacation' | 'inactive' | ''>('available')
 
     function handeSubmit(e:React.FormEvent){
         e.preventDefault()
@@ -27,8 +28,8 @@ function WorkerForm({workers,onCreateWorker}:WorkerFormProps) {
         onCreateWorker(worker)
         setName('')
         setEmail('')
-        setRole('')
-        setStatus('')
+        setRole('worker')
+        setStatus('available')
     console.log('Submitted')
     return
     }
@@ -38,54 +39,17 @@ function WorkerForm({workers,onCreateWorker}:WorkerFormProps) {
 
 
   return (
-    <div style={{
-        display:'flex',
-        alignItems:'center',
-        justifyContent:'center',
-        borderRadius:'10px',
-        padding:'10px',
-        flexDirection:'column',
-        gap:'10px',
-        width:'100%'
-    }}>
-        <form
-        style={{
-        display:'flex',
-        border:'1px solid white',
-        borderRadius:'10px',
-        padding:'10px',
-        flexDirection:'column',
-        gap:'10px',
-        width:'70%'
-        }}
-        onSubmit={handeSubmit}
-        >
-            <h2>Worker Form</h2>
-            <label htmlFor="name">Name</label>
-            <input type="name" value={name} onChange={(e)=> setName(e.target.value)} placeholder='Worker Name' />
-            <label htmlFor="name">Email</label>
-            <input type="email" value={email} placeholder='Email' onChange={(e)=> setEmail(e.target.value)} />
-            <label htmlFor="name">Role</label>
-            <select value={role} onChange={(e)=>setRole(e.target.value as 'worker' | 'manager' | 'admin' | 'owner' | 'accountant')} name="selectRole" id="role">
-                <option value="">Select role</option>
-                <option value="worker">worker</option>
-                <option value="manager">manager</option>
-                <option value="admin">admin</option>
-                <option value="accountant">accountant</option>
-                <option value="owner">owner</option>
-            </select>
-            <label htmlFor="name">Status</label>
-            <select value={status} name="status" id="status" onChange={(e)=>setStatus(e.target.value as 'available' | 'sick' | 'vacation' | 'inactive')}>
-                <option value="">Select status</option>
-                <option value="available">available</option>
-                <option value="sick">sick</option>
-                <option value="vacation">vacation</option>
-                <option value="inactive">inactive</option>
-            </select>
-            <button type='submit'>Create</button>
-        </form>
-        
-    </div>
+    <form onSubmit={handeSubmit}>
+      <Stack>
+        <TextInput required label="Name" value={name} onChange={(e) => setName(e.currentTarget.value)} placeholder="Worker name" />
+        <TextInput required type="email" label="Email" value={email} onChange={(e) => setEmail(e.currentTarget.value)} placeholder="name@company.com" />
+        <Select required label="Role" value={role} data={['worker', 'manager', 'admin', 'accountant', 'owner']}
+          onChange={(value) => setRole((value ?? '') as typeof role)} />
+        <Select required label="Status" value={status} data={['available', 'sick', 'vacation', 'inactive']}
+          onChange={(value) => setStatus((value ?? '') as typeof status)} />
+        <Button type="submit">Create worker</Button>
+      </Stack>
+    </form>
   )
 }
 

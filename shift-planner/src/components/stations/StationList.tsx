@@ -1,5 +1,6 @@
 import type { Station } from '../../types/Station'
 import StationCard from './StationCard'
+import { Paper, Stack, Text } from '@mantine/core'
 interface StationListProps {
   stations : Station[],
   selectedStation:Station | null ,
@@ -8,17 +9,8 @@ interface StationListProps {
 
 function StationList({stations , selectedStation , onSelectedStation}:StationListProps) {
   return (
-    <div style={{
-      display:'flex',
-      justifyContent:'center',
-      alignContent:'center',
-      flexDirection:'column',
-      border:'1px solid white' ,
-      borderRadius:'15px',
-      gap:'5px',
-      padding:'10px' ,
-      
-    }}>
+    <Paper withBorder p="lg">
+      <Stack>
       {stations.map(station => 
       <StationCard 
       key={station.id} 
@@ -27,8 +19,9 @@ function StationList({stations , selectedStation , onSelectedStation}:StationLis
       onSelectedStation={onSelectedStation}
       />
       )}
-      {stations.length === 0 && <p>No Stations Found</p>}
-    </div>
+      {stations.length === 0 && <Text c="dimmed" ta="center" py="xl">No stations found.</Text>}
+      </Stack>
+    </Paper>
   )
 }
 

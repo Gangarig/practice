@@ -1,62 +1,70 @@
-import { Weekdays } from "../../data/Weekdays"
-import type { Station } from "../../types/Station";
-import type { Worker } from "../../types/Worker";
-import type { Assignment } from "../../types/Assignment";
-import GridCell from "./GridCell";
-
+import { Paper, Text } from '@mantine/core'
+import { Weekdays } from '../../data/Weekdays'
+import type { Station } from '../../types/Station'
+import type { Worker } from '../../types/Worker'
+import type { Assignment } from '../../types/Assignment'
+import GridCell from './GridCell'
 
 interface PlannerGridProps {
-    stations:Station[],
-    workers:Worker[],
-    assignments:Assignment[],
-    onRemoveAssignment:(assignment:Assignment )=>void
-    onSelectAssignment:(value:Assignment | null) =>void
+  stations: Station[]
+  workers: Worker[]
+  assignments: Assignment[]
+  onRemoveAssignment: (assignment: Assignment) => void
+  onSelectAssignment: (value: Assignment | null) => void
 }
-function PlannerGrid({stations,workers,assignments,onRemoveAssignment,onSelectAssignment}:PlannerGridProps) {
-    const weekdays = Weekdays;
-    
-    function findWorkerById(id:number):Worker | undefined {
-        return workers.find(worker => worker.id === id)
-    }
 
+function PlannerGrid({
+  stations,
+  workers,
+  assignments,
+  onRemoveAssignment,
+  onSelectAssignment,
+}: PlannerGridProps) {
   return (
-    <div style={{
-        border:'1px solid white',borderRadius:'10px',padding:'10px', width:'100%', marginTop:'100px',display:'flex',flexDirection:'row',justifyContent:'space-evenly'
-    }}> 
-        <div style={{
-            display:'flex' , flexDirection:'column',width:'15%'
-        }}>
-        <div style={{
-        }}>Days</div>
-        {stations.map(station => <GridCell
-        key={station.id} onRemoveAssignment={onRemoveAssignment} worker={null} station={station} assignment={null}
-        onSelectAssignment={onSelectAssignment} />)}
+    <Paper withBorder className="planner-matrix">
+      <div className="planner-matrix-grid">
+        <div className="planner-corner">
+          <Text size="xs" fw={700} c="dimmed">Station</Text>
         </div>
-        {weekdays.map(
-            day => <div key={day} style={{
-                display:'flex', flexDirection:'column',width:'15%'
-                }}> {day}
-                    {stations.map(station => {
-                        const assignment = assignments.find(assignment => 
-                            assignment.stationId === station.id && day === assignment.date 
-                        )
-                        if(!assignment) {
-                            return   <GridCell key={station.id} station={null}  worker={null} onRemoveAssignment={onRemoveAssignment} assignment={null}
-                            onSelectAssignment={onSelectAssignment}  />
-                        }
-                        const worker = findWorkerById(assignment.workerId)
-                        if(!worker) {
-                            return <GridCell key={station.id} station={null} worker={null}  onRemoveAssignment={onRemoveAssignment} assignment={null} 
-                            onSelectAssignment={onSelectAssignment} />
-                        }
-                        return <GridCell key={station.id} station={null} worker={worker} assignment={assignment}  onRemoveAssignment={onRemoveAssignment}
-                        onSelectAssignment={onSelectAssignment} />
-                    })}
+        {Weekdays.map((day) => (
+          <div className="planner-day-header" key={day}>
+            <Text fw={700} size="sm">
+              <span className="day-name-full">{day}</span>
+              <span className="day-name-short">{day.slice(0, 3)}</span>
+            </Text>
+          </div>
+        ))}
+
+        {stations.map((station) => (
+          <div className="planner-row" key={station.id}>
+            <div className="planner-station-header">
+              <Text fw={600} size="sm" truncate>{station.name}</Text>
             </div>
-        )}
-    </div>
+            {Weekdays.map((day) => {
+              const assignment = assignments.find(
+                (item) => item.stationId === station.id && item.date === day,
+              ) ?? null
+              const worker = assignment
+                ? workers.find((item) => item.id === assignment.workerId) ?? null
+                : null
+
+              return (
+                <GridCell
+                  key={`${station.id}-${day}`}
+                  station={station}
+                  worker={worker}
+                  assignment={assignment}
+                  onRemoveAssignment={onRemoveAssignment}
+                  onSelectAssignment={onSelectAssignment}
+                />
+              )
+            })}
+          </div>
+        ))}
+      </div>
+      {stations.length === 0 && <Text c="dimmed" ta="center" p="xl">No stations yet.</Text>}
+    </Paper>
   )
 }
 
 export default PlannerGrid
-

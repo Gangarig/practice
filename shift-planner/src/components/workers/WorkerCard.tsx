@@ -1,4 +1,5 @@
 import type { Worker } from '../../types/Worker'
+import { Avatar, Badge, Group, Paper, Stack, Text } from '@mantine/core'
 interface WorkerCardProps {
     worker :Worker,
     selectedWorker:Worker | null,
@@ -7,30 +8,21 @@ interface WorkerCardProps {
 
 function WorkerCard({worker,selectedWorker,onSelectWorker}:WorkerCardProps) {
     const isSelected = worker.id === selectedWorker?.id;
-    let bgColor = 'green';
-        if(worker.status === 'sick') {
-            bgColor = 'red';
-
-    }
-        if(worker.status === 'vacation') {
-            bgColor = 'yellow';
-
-    }
-        if(worker.status === 'inactive') {
-            bgColor = 'gray';
-
-    }
+    const colors = { available: 'green', sick: 'red', vacation: 'yellow', inactive: 'gray' };
   return (
-    <div
+    <Paper component="button" type="button" withBorder p="md" radius="md"
     onClick={() => onSelectWorker(worker)}
-    style={{border:'1px solid white' , width:'150px',borderRadius:'10px',
-    cursor:'pointer',
-    margin:'5px',
-    color:'black',
-    font:'15px',
-    background:isSelected ? 'beige' : bgColor 
-    }}
-    >{worker.name}</div>
+    bg={isSelected ? 'var(--mantine-color-blue-light)' : undefined}
+    style={{ cursor: 'pointer', textAlign: 'left', width: '100%', borderColor: isSelected ? 'var(--mantine-color-blue-6)' : undefined }}>
+      <Group wrap="nowrap">
+        <Avatar color={colors[worker.status]}>{worker.name.slice(0, 2).toUpperCase()}</Avatar>
+        <Stack gap={2} style={{ flex: 1, minWidth: 0 }}>
+          <Text fw={600} truncate>{worker.name}</Text>
+          <Text size="xs" c="dimmed" truncate>{worker.email}</Text>
+        </Stack>
+        <Badge color={colors[worker.status]} variant="light">{worker.status}</Badge>
+      </Group>
+    </Paper>
   )
 }
 

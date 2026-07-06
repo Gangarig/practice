@@ -2,15 +2,17 @@ import type { Station } from "../../types/Station"
 import type { Worker } from "../../types/Worker"
 import type { Assignment,NewAssignment, Weekday } from "../../types/Assignment"
 import { useState } from "react"
+import { Button, Select, Stack, Textarea } from '@mantine/core'
 
 interface AssignmentControlsProps {
     stations:Station[] | null,
     workers:Worker[] | null,
     assignments:Assignment[],
     onCreateAssignment : (value:NewAssignment)=>void
+    onCreated?: () => void
 }
 
-function AssignmentControls({stations,workers ,assignments,onCreateAssignment}:AssignmentControlsProps) {
+function AssignmentControls({stations,workers,assignments,onCreateAssignment,onCreated}:AssignmentControlsProps) {
 
     const [selectedWorkerId,setSelectedWorkerId] = useState<string|''>('');
     const [selectedStationId,setSelectedStationId] = useState<string|''>('');
@@ -55,79 +57,26 @@ function AssignmentControls({stations,workers ,assignments,onCreateAssignment}:A
         setSelectedStationId('')
         setSelectedWorkerId('')
         setNote('')
+        onCreated?.()
         return
     }
 
 
   return (
-    <div
-    style={{
-        width:'100%' , 
-        display:'flex',
-        flexDirection:'column',
-        alignItems:'center',
-        justifyContent:'center',
-        border:'1px solid white',
-        padding:'10px' ,
-        borderRadius:'10px',
-        marginTop:'20px',
-        gap:'10px',
-        
-    }}
-    >
-        <select 
-        onChange={(e)=>setSelectedStationId(
-            e.target.value === '' ? '' : e.target.value
-        )}
-        name="selectStation" id="station" value={selectedStationId}>
-            <option value={''}>Select a Station</option>
-            {stations && stations.map(station => 
-                <option
-                key={station.id}
-                value={station.id}
-                >{station.name}</option>
-            )}
-        </select>
-
-
-        <select 
-        onChange={(e)=>setSelectedWorkerId(
-            e.target.value === '' ? '' : e.target.value
-        )}
-        name="selectWorker" id="worker" value={selectedWorkerId}> 
-        <option value={''}>Select a Worker</option>
-            {workers && workers.map(worker => 
-                <option
-                key={worker.id}
-                value={worker.id}
-                >{worker.name}</option>
-            )}
-        </select>
-
-
-        <select 
-        onChange={(e)=>setSelectedDay(e.target.value as Weekday | '')}
-        name="day" id="day" value={selectedDay}  >
-                <option value={''}>Select a day</option>
-                <option value="Monday">Monday</option>
-                <option value="Tuesday">Tuesday</option>
-                <option value="Wednesday">Wednesday</option>
-                <option value="Thursday">Thursday</option>
-                <option value="Friday">Friday</option>
-        </select>
-        <div>
-            <p>Note</p>
-            <textarea
-            name='assignmentNote'
-            rows={3}
-            cols={20}
-            value={note ?? ''}
-            style={{borderRadius:'5px',}}
-            onChange={(e)=>handleNote(e.target.value)}
-            ></textarea>
-        </div>
-        <button onClick={()=>handleSubmit()}>Create Assignment</button>
-    </div>
+      <Stack gap="sm">
+          <Select size="sm" label="Station" placeholder="Choose station" searchable value={selectedStationId}
+            data={(stations ?? []).map((station) => ({ value: station.id, label: station.name, disabled: !station.active }))}
+            onChange={(value) => setSelectedStationId(value ?? '')} />
+          <Select size="sm" label="Worker" placeholder="Choose worker" searchable value={selectedWorkerId}
+            data={(workers ?? []).map((worker) => ({ value: worker.id, label: worker.name, disabled: worker.status !== 'available' }))}
+            onChange={(value) => setSelectedWorkerId(value ?? '')} />
+          <Select size="sm" label="Day" placeholder="Choose day" value={selectedDay}
+            data={['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']}
+            onChange={(value) => setSelectedDay((value ?? '') as Weekday | '')} />
+        <Textarea size="sm" label="Note" placeholder="Optional handover note" autosize minRows={2} value={note}
+          onChange={(e) => handleNote(e.currentTarget.value)} />
+        <Button fullWidth onClick={handleSubmit}>Create assignment</Button>
+      </Stack>
   )
 }
 

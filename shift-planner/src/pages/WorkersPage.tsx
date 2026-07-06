@@ -8,11 +8,13 @@ import WorkerForm from "../components/workers/WorkerForm"
 import useApp from "../hooks/useApp"
 import type { Worker } from "../types/Worker"
 import Search from "../components/Search"
-import { LoadingOverlay, Box } from '@mantine/core';
+import { useDisclosure } from '@mantine/hooks';
+import { Badge, Box, Button, Group, LoadingOverlay, Modal, Paper, SimpleGrid, Stack, Text, Title } from '@mantine/core';
 
 function WorkersPage() {
   const [search,setSearch]=useState<string>('')
   const [selectedWorker,setSelectedWorker] = useState<Worker | null>(null)
+  const [createOpened, { open: openCreate, close: closeCreate }] = useDisclosure(false)
   const {
         sortedWorkers,
         setSortOrderWorker,
@@ -32,36 +34,44 @@ function WorkersPage() {
     return
   }
   return (
-    <>
-        <Box pos="relative">
+    <Box pos="relative" className="page-container">
           <LoadingOverlay visible={loadingWorkers} loaderProps={{ children: 'Loading...' }} />
-          <Search search={search} onSearch={setSearch}/>
-          <WorkerSort sortOrder={sortOrderWorker} onSort={setSortOrderWorker} />
-          <WorkerList
-          selectedWorker={selectedWorker}
-          setSelectedWorker={setSelectedWorker}
-          workers={sortedWorkers}
-          />
-          { selectedWorker ? 
-          <WorkerDetail 
-          worker={selectedWorker}
-          setSelectedWorker={setSelectedWorker}
-          onRemoveWorker={removeWorker}
-          onChangeOfStatus={handleUpdateWorker}
-          assignments={assignments}
-          updateWorkerState={handleUpdateWorker}
-          />
-          : null}
+          <Stack gap="lg">
+            <Group justify="space-between" align="flex-end">
+              <div>
+                <Group gap="xs">
+                  <Title order={1}>Workers</Title>
+                  <Badge variant="light">{workers.length}</Badge>
+                </Group>
+                <Text c="dimmed">Manage your team, availability, and workload.</Text>
+              </div>
+              <Button onClick={openCreate}>Add worker</Button>
+            </Group>
+            <Paper withBorder p="md">
+              <SimpleGrid cols={{ base: 1, sm: 2 }}>
+                <Search search={search} onSearch={setSearch}/>
+                <WorkerSort sortOrder={sortOrderWorker} onSort={setSortOrderWorker} />
+              </SimpleGrid>
+            </Paper>
+            <SimpleGrid cols={{ base: 1, md: selectedWorker ? 2 : 1 }} spacing="lg">
+              <WorkerList selectedWorker={selectedWorker} setSelectedWorker={setSelectedWorker} workers={sortedWorkers} />
+              {selectedWorker && (
+                <Stack>
+                  <WorkerDetail worker={selectedWorker} setSelectedWorker={setSelectedWorker}
+                    onRemoveWorker={removeWorker} onChangeOfStatus={handleUpdateWorker}
+                    assignments={assignments} updateWorkerState={handleUpdateWorker} />
+                  <WorkerEdit selectedWorker={selectedWorker} onUpdateWorker={updateWorker} />
+                </Stack>
+              )}
+            </SimpleGrid>
+          </Stack>
+          <Modal opened={createOpened} onClose={closeCreate} title="Add worker" centered>
           <WorkerForm
           workers={workers}
           onCreateWorker={createWorker}
           />
-          <WorkerEdit
-          selectedWorker={selectedWorker ?? null}
-          onUpdateWorker={updateWorker}
-          />
+          </Modal>
         </Box>
-    </>
   )
 }
 

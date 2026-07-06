@@ -7,9 +7,9 @@ interface SearchProps {
 function Search({ search, onSearch }: SearchProps) {
   return (
     <TextInput
-      label="Search"
-      description="Input description"
-      placeholder="Input placeholder"
+      placeholder="Search by name..."
+      aria-label="Search"
+      leftSection="⌕"
       value={search}
       onChange={(event) => onSearch(event.currentTarget.value)}
     />

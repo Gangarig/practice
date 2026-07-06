@@ -5,10 +5,18 @@ import '@mantine/core/styles.css'
 import '@mantine/notifications/styles.css';
 import { MantineProvider } from '@mantine/core'
 import { Notifications } from '@mantine/notifications'
+import './index.css'
+
+const theme = {
+  primaryColor: 'blue',
+  defaultRadius: 'md',
+  fontFamily: 'Inter, ui-sans-serif, system-ui, sans-serif',
+};
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <MantineProvider>
-      <Notifications />
+    <MantineProvider theme={theme} defaultColorScheme="dark">
+      <Notifications position="top-right" />
       <App />
     </MantineProvider>
   </StrictMode>,
