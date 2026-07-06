@@ -34,11 +34,16 @@ function AppProvider() {
         setLoadingAssignments(true)
         setAssignmentsError(null)
         const data = await loadAssignments();
-
             setAssignments(data)
         }
         catch (error) {
             setAssignmentsError('Could not load assignments')
+            notifications.show({
+                position:'top-right',
+                color:'red',
+                title: 'Assignment loading failed',
+                message: 'The assignments could not be loaded',
+            });
             return
         } finally {
             setLoadingAssignments(false)
@@ -48,8 +53,20 @@ function AppProvider() {
         try {
             setAssignmentsError(null)
             await createAssignment(newAssignment);
+            notifications.show({
+                position:'top-right',
+                color:'green',
+                title: 'Assignment created',
+                message: 'The assignment was created successfully',
+            });
         }catch (error){
             setAssignmentsError('Could not create new assignment')
+            notifications.show({
+                position:'top-right',
+                color:'red',
+                title: 'Assignment creation failed',
+                message: 'The assignment could not be created',
+            });
             return
         }
             await refreshAssignments();
@@ -58,8 +75,20 @@ function AppProvider() {
         try {
             setAssignmentsError(null)
             await updateAssignment(assignment);
+            notifications.show({
+                position:'top-right',
+                color:'green',
+                title: 'Assignment updated',
+                message: 'The assignment was updated successfully',
+            });
         }catch (error){
             setAssignmentsError('Could not update assignment')
+            notifications.show({
+                position:'top-right',
+                color:'red',
+                title: 'Assignment update failed',
+                message: 'The assignment could not be updated',
+            });
             return
         }
             await refreshAssignments();
@@ -70,6 +99,12 @@ function AppProvider() {
             await removeAssignment(assignment);
         }catch (error){
             setAssignmentsError('Could not remove assignment')
+            notifications.show({
+                position:'top-right',
+                color:'red',
+                title: 'Assignment deletion failed',
+                message: 'The assignment could not be deleted',
+            });
             return
         }  
             await refreshAssignments();
@@ -84,6 +119,12 @@ function AppProvider() {
             setStations(data)
         } catch {
         setStationsError("Could not load stations")
+        notifications.show({
+            position:'top-right',
+            color:'red',
+            title: 'Station loading failed',
+            message: 'The stations could not be loaded',
+        });
         } finally {
         setLoadingStations(false)
         }
@@ -92,8 +133,20 @@ function AppProvider() {
         try {
             setStationsError(null)
             await updateStation(station);
+            notifications.show({
+                position:'top-right',
+                color:'green',
+                title: 'Station updated',
+                message: 'The station was updated successfully',
+            });
         }catch (error){
             setStationsError('Could not update station')
+            notifications.show({
+                position:'top-right',
+                color:'red',
+                title: 'Station update failed',
+                message: 'The station could not be updated',
+            });
             return
         }
             await refreshStations();
@@ -102,8 +155,20 @@ function AppProvider() {
         try {
             setStationsError(null)
             await createStation(newStation);
+            notifications.show({
+                position:'top-right',
+                color:'green',
+                title: 'Station created',
+                message: 'The station was created successfully',
+            });
         }catch (error){
             setStationsError('Could not create station')
+            notifications.show({
+                position:'top-right',
+                color:'red',
+                title: 'Station creation failed',
+                message: 'The station could not be created',
+            });
             return
         } 
             await refreshStations();
@@ -114,11 +179,29 @@ function AppProvider() {
             const hasAssignmentsOnStation = assignments.some(item=> item.stationId === station.id)
             if(hasAssignmentsOnStation) {
                 setStationsError('station has assignments')
+                notifications.show({
+                    position:'top-right',
+                    color:'red',
+                    title: 'Station deletion failed',
+                    message: 'The station could not be deleted because it has assignments',
+                });
                 return null
             }
             await removeStation(station);
+            notifications.show({
+                position:'top-right',
+                color:'green',
+                title: 'Station deleted',
+                message: 'The station was deleted successfully',
+            });
         } catch (error) {
             setStationsError('Could not remove station')
+            notifications.show({
+                position:'top-right',
+                color:'red',
+                title: 'Station deletion failed',
+                message: 'The station could not be deleted',
+            });
             return
         } 
             await refreshStations();
@@ -134,6 +217,12 @@ function AppProvider() {
 
         } catch {
         setWorkersError("Could not load workers")
+        notifications.show({
+            position:'top-right',
+            color:'red',
+            title: 'Worker loading failed',
+            message: 'The workers could not be loaded',
+        });
         } finally {
         setLoadingWorkers(false)
         }
@@ -143,12 +232,30 @@ function AppProvider() {
             const hasAssignment = assignments.some((item:Assignment) => item.workerId === selectedWorker.id)
             if(hasAssignment){
                 setWorkersError('Worker has assignment')
+                notifications.show({
+                    position:'top-right',
+                    color:'red',
+                    title: 'Worker deletion failed',
+                    message: 'The worker could not be deleted because they have assignments',
+                });
                 return null
             }
         try {
             await removeWorker(selectedWorker);
+            notifications.show({
+                position:'top-right',
+                color:'green',
+                title: 'Worker deleted',
+                message: 'The worker was deleted successfully',
+            });
         } catch (error) {
             setWorkersError('Could not delete worker')
+            notifications.show({
+                position:'top-right',
+                color:'red',
+                title: 'Worker deletion failed',
+                message: 'The worker could not be deleted',
+            });
             return
         }   
             await refreshWorkers();
@@ -157,10 +264,22 @@ function AppProvider() {
         try {
             setWorkersError(null)
             await updateWorker(worker);
-        }catch (error){
+            notifications.show({
+                position:'top-right',
+                color:'green',
+                title: 'Worker updated',
+                message: 'The worker was updated successfully',
+            });
+        } catch (error) {
             setWorkersError('Could not update worker')
+            notifications.show({
+                position:'top-right',
+                color:'red',
+                title: 'Worker update failed',
+                message: 'The worker could not be updated',
+            });
             return
-        } 
+        }                         
             await refreshWorkers();
     }
     async function handleCreateWorker(newWorker:NewWorker) {
@@ -168,11 +287,19 @@ function AppProvider() {
             setWorkersError(null)
             await createWorker(newWorker);
             notifications.show({
+            position:'top-right',
+            color:'green',
             title: 'Worker created',
             message: 'The worker was added successfully',
             });
         }catch (error){
             setWorkersError('Could not create worker')
+            notifications.show({
+            position:'top-right',
+            color:'red',
+            title: 'Worker creation failed',
+            message: 'The worker could not be added',
+            });
             return
         }  
             await refreshWorkers();

@@ -1,4 +1,4 @@
-
+import { TextInput } from '@mantine/core';
 interface SearchProps {
     search:string,
     onSearch:(value:string)=> void,
@@ -6,14 +6,13 @@ interface SearchProps {
 
 function Search({ search, onSearch }: SearchProps) {
   return (
-    <div>
-      <h2>Search</h2>
-      <input
-        value={search}
-        onChange={(e) => onSearch(e.target.value)}
-        type="text"
-      />
-    </div>
+    <TextInput
+      label="Search"
+      description="Input description"
+      placeholder="Input placeholder"
+      value={search}
+      onChange={(event) => onSearch(event.currentTarget.value)}
+    />
   );
 }
 

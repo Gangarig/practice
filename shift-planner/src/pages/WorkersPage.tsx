@@ -8,6 +8,7 @@ import WorkerForm from "../components/workers/WorkerForm"
 import useApp from "../hooks/useApp"
 import type { Worker } from "../types/Worker"
 import Search from "../components/Search"
+import { LoadingOverlay, Box } from '@mantine/core';
 
 function WorkersPage() {
   const [search,setSearch]=useState<string>('')
@@ -22,6 +23,7 @@ function WorkersPage() {
           createWorker,
           removeWorker,
           updateWorker,
+          loadingWorkers,
       } = useApp()
 
   function handleUpdateWorker(worker:Worker) {
@@ -30,33 +32,36 @@ function WorkersPage() {
     return
   }
   return (
-    <div>
-        <Search search={search} onSearch={setSearch}/>
-        <WorkerSort sortOrder={sortOrderWorker} onSort={setSortOrderWorker} />
-        <WorkerList
-        selectedWorker={selectedWorker}
-        setSelectedWorker={setSelectedWorker}
-        workers={sortedWorkers}
-        />
-        { selectedWorker ? 
-        <WorkerDetail 
-        worker={selectedWorker}
-        setSelectedWorker={setSelectedWorker}
-        onRemoveWorker={removeWorker}
-        onChangeOfStatus={handleUpdateWorker}
-        assignments={assignments}
-        updateWorkerState={handleUpdateWorker}
-        />
-        : null}
-        <WorkerForm
-        workers={workers}
-        onCreateWorker={createWorker}
-        />
-        <WorkerEdit
-        selectedWorker={selectedWorker ?? null}
-        onUpdateWorker={updateWorker}
-        />
-    </div>
+    <>
+        <Box pos="relative">
+          <LoadingOverlay visible={loadingWorkers} loaderProps={{ children: 'Loading...' }} />
+          <Search search={search} onSearch={setSearch}/>
+          <WorkerSort sortOrder={sortOrderWorker} onSort={setSortOrderWorker} />
+          <WorkerList
+          selectedWorker={selectedWorker}
+          setSelectedWorker={setSelectedWorker}
+          workers={sortedWorkers}
+          />
+          { selectedWorker ? 
+          <WorkerDetail 
+          worker={selectedWorker}
+          setSelectedWorker={setSelectedWorker}
+          onRemoveWorker={removeWorker}
+          onChangeOfStatus={handleUpdateWorker}
+          assignments={assignments}
+          updateWorkerState={handleUpdateWorker}
+          />
+          : null}
+          <WorkerForm
+          workers={workers}
+          onCreateWorker={createWorker}
+          />
+          <WorkerEdit
+          selectedWorker={selectedWorker ?? null}
+          onUpdateWorker={updateWorker}
+          />
+        </Box>
+    </>
   )
 }
 
