@@ -27,10 +27,15 @@ function StationsPage() {
         updateStation,
         removeStation,
         loadingStations,
+        stationsError
     } = useApp()
   return (
         <Box pos="relative" className="page-container">
             <LoadingOverlay visible={loadingStations} loaderProps={{ children: 'Loading...' }} />
+            {stations.length === 0 && !loadingStations && (
+                <Text>No stations found</Text>
+            )}
+            {stationsError && <Text color="red">Could not load stations</Text>}
             <Stack gap="lg">
               <Group justify="space-between" align="flex-end">
                 <div>
@@ -46,6 +51,9 @@ function StationsPage() {
                 </SimpleGrid>
               </Paper>
               <SimpleGrid cols={{ base: 1, md: selectedStation ? 2 : 1 }}>
+                {!stationsError && stations.length > 0 && stations.length === 0 && (
+                <Text>No stations match your search.</Text>
+                )}
                 <StationList stations={sortedStations} selectedStation={selectedStation} onSelectedStation={setSelectedStation} />
                 {selectedStation && <Stack>
                   <StationDetail assignments={assignments} selectedStation={selectedStation} onSelectedStation={setSelectedStation} />

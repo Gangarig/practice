@@ -8,18 +8,24 @@ export interface AppContextValue {
     stations : Station[] ,
     assignments : Assignment[] ,
 
-    createWorker :(worker: NewWorker) => void
-    updateWorker : (worker: Worker) => void
-    removeWorker : (worker: Worker) => void
+    createWorker :(worker: NewWorker) => Promise<void>
+    updateWorker : (worker: Worker) => Promise<void>
+    removeWorker : (worker: Worker) => Promise<void>
 
-    createStation : (station: NewStation) => void
-    updateStation : (station: Station) => void
-    removeStation : (station: Station) => void
+    createStation : (station: NewStation) => Promise<void>
+    updateStation : (station: Station) => Promise<void>
+    removeStation : (station: Station) => Promise<void>
 
-    createAssignment : (assignment : NewAssignment) => void
-    updateAssignment : (assignment : Assignment) => void
-    removeAssignment : (assignment : Assignment) => void
+    createAssignment : (assignment : NewAssignment) => Promise<void>
+    updateAssignment : (assignment : Assignment) => Promise<void>
+    removeAssignment : (assignment : Assignment) => Promise<void>
 
+    monday : Date,
+    weekDays : { label: string; date: Date }[]
+    
+    selectedWeekDate : Date,
+    setSelectedWeekDate : (date:Date) => void,
+    
     loadingWorkers : boolean,
     workersError : string | null,
     loadingStations :boolean,

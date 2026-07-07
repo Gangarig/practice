@@ -5,10 +5,11 @@ import type { Worker , NewWorker } from '../types/Worker'
 import type { Assignment , NewAssignment } from '../types/Assignment'
 import type { Station , NewStation } from '../types/Station'
 import { Outlet } from 'react-router-dom'
-import { createWorker , updateWorker , removeWorker , loadWorkers} from './workerService'
-import { loadStations,createStation,updateStation,removeStation } from './stationService'
-import { loadAssignments , createAssignment , updateAssignment,removeAssignment } from './assignmentService'
+import { createWorker , updateWorker , removeWorker , loadWorkers} from '../services/workerService'
+import { loadStations,createStation,updateStation,removeStation } from '../services/stationService'
+import { loadAssignments , createAssignment , updateAssignment,removeAssignment } from '../services/assignmentService'
 import { notifications } from '@mantine/notifications';
+import { getMondayOfWeek , getWeekDays} from '../lib/dateUtils'
 
 function AppProvider() {
     const [workers,setWorkers] = useState<Worker[]>([]);
@@ -21,10 +22,14 @@ function AppProvider() {
     const [loadingAssignments,setLoadingAssignments] = useState(false);
     const [assignmentsError , setAssignmentsError] = useState<string|null>(null)
 
+    const [selectedWeekDate , setSelectedWeekDate] = useState<Date>(new Date());
+    const monday = getMondayOfWeek(selectedWeekDate);
+    const weekDays = getWeekDays(monday);
     useEffect(()=>{
         refreshWorkers();
         refreshStations();
         refreshAssignments();
+
     },[])
 
 
@@ -185,7 +190,7 @@ function AppProvider() {
                     title: 'Station deletion failed',
                     message: 'The station could not be deleted because it has assignments',
                 });
-                return null
+                return
             }
             await removeStation(station);
             notifications.show({
@@ -238,7 +243,7 @@ function AppProvider() {
                     title: 'Worker deletion failed',
                     message: 'The worker could not be deleted because they have assignments',
                 });
-                return null
+                return
             }
         try {
             await removeWorker(selectedWorker);
@@ -320,6 +325,10 @@ function AppProvider() {
         createAssignment:handleCreateAssignment,
         updateAssignment:handleUpdateAssignment,
         removeAssignment:handleRemoveAssignment,
+        monday,
+        weekDays,
+        selectedWeekDate,
+        setSelectedWeekDate,
         loadingWorkers,
         workersError,
         loadingStations,

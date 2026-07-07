@@ -1,6 +1,6 @@
 import type { Station } from "../../types/Station"
 import type { Worker } from "../../types/Worker"
-import type { Assignment,NewAssignment, Weekday } from "../../types/Assignment"
+import type { Assignment,NewAssignment,Weekdays } from "../../types/Assignment"
 import { useState } from "react"
 import { Button, Select, Stack, Textarea } from '@mantine/core'
 
@@ -9,14 +9,18 @@ interface AssignmentControlsProps {
     workers:Worker[] | null,
     assignments:Assignment[],
     onCreateAssignment : (value:NewAssignment)=>void
-    onCreated?: () => void
+    onCreated?: () => void,
+    monday:Date,
+    weekDays:Weekdays
 }
 
-function AssignmentControls({stations,workers,assignments,onCreateAssignment,onCreated}:AssignmentControlsProps) {
+function AssignmentControls({stations,workers,assignments,onCreateAssignment,onCreated
+,monday,weekDays
+}:AssignmentControlsProps) {
 
     const [selectedWorkerId,setSelectedWorkerId] = useState<string|''>('');
     const [selectedStationId,setSelectedStationId] = useState<string|''>('');
-    const [selectedDay,setSelectedDay] = useState<Weekday | ''>('') 
+    const [selectedDay,setSelectedDay] = useState<string>(weekDays[0].label); 
     const [note , setNote] = useState<string>('')
     function handleNote (note:string) {
         setNote(note)
@@ -53,7 +57,7 @@ function AssignmentControls({stations,workers,assignments,onCreateAssignment,onC
             note: note
         }
         onCreateAssignment(assignment)
-        setSelectedDay('')
+        setSelectedDay(null)
         setSelectedStationId('')
         setSelectedWorkerId('')
         setNote('')

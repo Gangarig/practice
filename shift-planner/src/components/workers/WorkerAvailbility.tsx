@@ -1,7 +1,6 @@
 import { Badge, Group, Paper, Spoiler, Text } from '@mantine/core'
-import type { Assignment, Weekday } from '../../types/Assignment'
+import type { Assignment, Weekdays } from '../../types/Assignment'
 import type { Worker } from '../../types/Worker'
-import { Weekdays } from '../../data/Weekdays'
 import useApp from '../../hooks/useApp'
 
 const statusColors = {
@@ -12,8 +11,7 @@ const statusColors = {
 } as const
 
 function WorkerAvailability() {
-  const { workers, assignments, stations } = useApp()
-  const week: Weekday[] = Weekdays
+  const { workers, assignments, stations,monday,weekDays } = useApp()
 
   function getAvailability(worker: Worker, assignment: Assignment | undefined) {
     if (worker.status !== 'available') {
@@ -41,8 +39,13 @@ function WorkerAvailability() {
       <Spoiler maxHeight={276} showLabel="Show all workers" hideLabel="Show less">
         <div className="availability-grid">
           <div className="availability-header availability-worker">Worker</div>
-          {week.map((day) => (
-            <div className="availability-header" key={day}>{day.slice(0, 3)}</div>
+          {weekDays.map((day) => (
+            <div className="availability-header" key={day.label}>
+              <Text fw={700} size="sm">
+                <span className="day-name-full">{day.label}</span>
+                <span className="day-name-short">{day.label.slice(0, 3)}</span>
+              </Text>
+            </div>
           ))}
 
           {workers.map((worker) => (
@@ -50,9 +53,9 @@ function WorkerAvailability() {
               <div className="availability-worker">
                 <Text size="xs" fw={600} truncate title={worker.name}>{worker.name}</Text>
               </div>
-              {week.map((day) => {
+              {weekDays.map((day) => {
                 const assignment = assignments.find(
-                  (item) => item.date === day && item.workerId === worker.id,
+                  (item) => item.workerId === worker.id && item.date.getTime() === day.date.getTime(),
                 )
                 const availability = getAvailability(worker, assignment)
                 return (

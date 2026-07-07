@@ -26,8 +26,8 @@ function WorkersPage() {
           removeWorker,
           updateWorker,
           loadingWorkers,
+          workersError
       } = useApp()
-
   function handleUpdateWorker(worker:Worker) {
     updateWorker(worker);
     setSelectedWorker(worker);
@@ -35,6 +35,10 @@ function WorkersPage() {
   }
   return (
     <Box pos="relative" className="page-container">
+          {workersError &&  <Text color="red">Could not load workers</Text>}
+          {!workersError && workers.length === 0 && !loadingWorkers && (
+            <Text>No workers found</Text>
+          )}  
           <LoadingOverlay visible={loadingWorkers} loaderProps={{ children: 'Loading...' }} />
           <Stack gap="lg">
             <Group justify="space-between" align="flex-end">
@@ -53,7 +57,11 @@ function WorkersPage() {
                 <WorkerSort sortOrder={sortOrderWorker} onSort={setSortOrderWorker} />
               </SimpleGrid>
             </Paper>
+            {workers.length > 0 &&
             <SimpleGrid cols={{ base: 1, md: selectedWorker ? 2 : 1 }} spacing="lg">
+              {!workersError && workers.length > 0 && sortedWorkers.length === 0 && (
+                <Text>No workers match your search.</Text>
+              )} 
               <WorkerList selectedWorker={selectedWorker} setSelectedWorker={setSelectedWorker} workers={sortedWorkers} />
               {selectedWorker && (
                 <Stack>
@@ -64,6 +72,7 @@ function WorkersPage() {
                 </Stack>
               )}
             </SimpleGrid>
+            }
           </Stack>
           <Modal opened={createOpened} onClose={closeCreate} title="Add worker" centered>
           <WorkerForm

@@ -17,11 +17,18 @@ function PlannerPage() {
         createAssignment,
         updateAssignment,
         removeAssignment,
-        loadingAssignments
+        loadingAssignments,
+        assignmentsError,
+        monday,
+        weekDays,
     } = useApp()
   return (
     <Box pos="relative" className="page-container">
       <LoadingOverlay visible={loadingAssignments} loaderProps={{ children: 'Loading...' }} />
+      {assignmentsError && <Text color="red">Could not load assignments</Text>}
+      {!assignmentsError && assignments.length === 0 && !loadingAssignments && (
+        <Text>No assignments found</Text>
+      )}
       <Stack gap="lg">
       <Group justify="space-between" align="flex-end">
         <div>
@@ -37,6 +44,8 @@ function PlannerPage() {
           onCreated={closeCreate}
           workers={workers}
           stations={stations}
+          monday={monday}
+          weekDays={weekDays}
         />
       </Modal>
       {selectedAssignment && (
@@ -57,6 +66,8 @@ function PlannerPage() {
             assignments={assignments}
             onRemoveAssignment={removeAssignment}
             onSelectAssignment={setSelectedAssignment}
+            weekDays={weekDays}
+            monday={monday}
           />
         </Grid.Col>
         <Grid.Col span={{ base: 12, lg: 3 }}>
