@@ -37,7 +37,7 @@ function AssignmentDetail({
             <Title order={3}>Assignment details</Title>
             <Text size="sm" c="dimmed">Review the shift and leave a handover note.</Text>
           </div>
-          <Badge variant="light">{assignment.date}</Badge>
+          <Badge variant="light">{assignment.date.toLocaleDateString()}</Badge>
         </Group>
 
         <Group>
