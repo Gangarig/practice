@@ -1,9 +1,10 @@
 import type { Station } from "../../types/Station"
 import type { Worker } from "../../types/Worker"
-import type { Assignment,NewAssignment,Weekdays } from "../../types/Assignment"
+import type { Assignment,NewAssignment,WorkWeek } from "../../types/Assignment"
 import { useState } from "react"
 import { Button, Select, Stack, Textarea } from '@mantine/core'
-
+import { notifications } from '@mantine/notifications'
+import { formatDate } from "../../lib/dateUtils"
 interface AssignmentControlsProps {
     stations:Station[] | null,
     workers:Worker[] | null,
@@ -11,7 +12,7 @@ interface AssignmentControlsProps {
     onCreateAssignment : (value:NewAssignment)=>void
     onCreated?: () => void,
     monday:Date,
-    weekDays:Weekdays
+    weekDays:WorkWeek
 }
 
 function AssignmentControls({stations,workers,assignments,onCreateAssignment,onCreated
@@ -20,44 +21,58 @@ function AssignmentControls({stations,workers,assignments,onCreateAssignment,onC
 
     const [selectedWorkerId,setSelectedWorkerId] = useState<string|''>('');
     const [selectedStationId,setSelectedStationId] = useState<string|''>('');
-    const [selectedDay,setSelectedDay] = useState<string>(weekDays[0].label); 
+    const [selectedDay,setSelectedDay] = useState<Date>(monday); 
     const [note , setNote] = useState<string>('')
     function handleNote (note:string) {
         setNote(note)
+    }
+    function showValidationWarning(message:string) {
+        notifications.show({
+            color: 'yellow',
+            title: 'Check assignment',
+            message,
+        })
     }
     function handleSubmit(){
         const worker = workers?.find(worker => worker.id === selectedWorkerId)
         const station = stations?.find(station => station.id === selectedStationId)
         if(!worker) {
-            return console.log('Worker error')
+            showValidationWarning('Please choose a worker')
+            return
         }
         if(!station) {
-            return console.log('Station error')
+            showValidationWarning('Please choose a station')
+            return
         }
         if(!selectedDay){
-            return console.log('Date error')
+            showValidationWarning('Please choose a day')
+            return
         }
-        if(assignments.find(item => item.date === selectedDay && selectedStationId === item.stationId)) {
-            return console.log('station/day already occupied')
+        if(assignments.find(item => item.date === formatDate(selectedDay) && selectedStationId === item.stationId)) {
+            showValidationWarning('This station already has an assignment for that day')
+            return
         }
-        if(assignments.find(item => item.date === selectedDay && selectedWorkerId === item.workerId)) {
-            return console.log('worker already assigned on other station')
+        if(assignments.find(item => item.date === formatDate(selectedDay) && selectedWorkerId === item.workerId)) {
+            showValidationWarning('This worker is already assigned to another station that day')
+            return
         }
         if(!station?.active) {
-            return console.log('Station is not acitve')
+            showValidationWarning('This station is not active')
+            return
         }
         if (worker.status !== 'available') {
-            return console.log('worker is not available')
+            showValidationWarning('This worker is not available')
+            return
         }
 
         const assignment: NewAssignment = {
             workerId: worker.id,
             stationId: station.id,
-            date: selectedDay,
+            date: formatDate(selectedDay),
             note: note
         }
         onCreateAssignment(assignment)
-        setSelectedDay(null)
+        setSelectedDay(monday)
         setSelectedStationId('')
         setSelectedWorkerId('')
         setNote('')
@@ -74,9 +89,14 @@ function AssignmentControls({stations,workers,assignments,onCreateAssignment,onC
           <Select size="sm" label="Worker" placeholder="Choose worker" searchable value={selectedWorkerId}
             data={(workers ?? []).map((worker) => ({ value: worker.id, label: worker.name, disabled: worker.status !== 'available' }))}
             onChange={(value) => setSelectedWorkerId(value ?? '')} />
-          <Select size="sm" label="Day" placeholder="Choose day" value={selectedDay}
-            data={['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']}
-            onChange={(value) => setSelectedDay((value ?? '') as Weekday | '')} />
+          <Select size="sm" label="Day" placeholder="Choose day" searchable value={selectedDay.toISOString()}
+            data={weekDays.map((day) => ({ value: day.date.toISOString(), label: day.label }))}
+            onChange={(value) => {
+                const selectedDate = weekDays.find((day) => day.date.toISOString() === value)?.date
+                if (selectedDate) {
+                    setSelectedDay(selectedDate)
+                }
+            }} />
         <Textarea size="sm" label="Note" placeholder="Optional handover note" autosize minRows={2} value={note}
           onChange={(e) => handleNote(e.currentTarget.value)} />
         <Button fullWidth onClick={handleSubmit}>Create assignment</Button>

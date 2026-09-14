@@ -1,4 +1,4 @@
-import React, { useState , useEffect } from 'react'
+import React, { useState } from 'react'
 import type { Worker } from '../../types/Worker'
 import { Button, Paper, Select, Stack, Text, TextInput } from '@mantine/core'
 
@@ -37,18 +37,8 @@ function WorkerEdit({selectedWorker,onUpdateWorker}:WorkerFormProps) {
         setEmail('')
         setRole('')
         setStatus('')
-    console.log('Submitted')
-    return
+        return
     }
-
-    useEffect (() => {
-        if(!selectedWorker) return ;
-
-        setName(selectedWorker.name);
-        setEmail(selectedWorker.email);
-        setRole(selectedWorker.role);
-        setStatus(selectedWorker.status);
-    },[selectedWorker])
   return (
     <Paper withBorder p="lg">
       <form onSubmit={handeSubmit}>

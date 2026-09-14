@@ -41,7 +41,7 @@ function AppProvider() {
         const data = await loadAssignments();
             setAssignments(data)
         }
-        catch (error) {
+        catch {
             setAssignmentsError('Could not load assignments')
             notifications.show({
                 position:'top-right',
@@ -64,7 +64,7 @@ function AppProvider() {
                 title: 'Assignment created',
                 message: 'The assignment was created successfully',
             });
-        }catch (error){
+        }catch {
             setAssignmentsError('Could not create new assignment')
             notifications.show({
                 position:'top-right',
@@ -86,7 +86,7 @@ function AppProvider() {
                 title: 'Assignment updated',
                 message: 'The assignment was updated successfully',
             });
-        }catch (error){
+        }catch {
             setAssignmentsError('Could not update assignment')
             notifications.show({
                 position:'top-right',
@@ -102,7 +102,7 @@ function AppProvider() {
         try {
             setAssignmentsError(null)
             await removeAssignment(assignment);
-        }catch (error){
+        }catch {
             setAssignmentsError('Could not remove assignment')
             notifications.show({
                 position:'top-right',
@@ -144,7 +144,7 @@ function AppProvider() {
                 title: 'Station updated',
                 message: 'The station was updated successfully',
             });
-        }catch (error){
+        }catch {
             setStationsError('Could not update station')
             notifications.show({
                 position:'top-right',
@@ -166,7 +166,7 @@ function AppProvider() {
                 title: 'Station created',
                 message: 'The station was created successfully',
             });
-        }catch (error){
+        }catch {
             setStationsError('Could not create station')
             notifications.show({
                 position:'top-right',
@@ -199,7 +199,7 @@ function AppProvider() {
                 title: 'Station deleted',
                 message: 'The station was deleted successfully',
             });
-        } catch (error) {
+        } catch {
             setStationsError('Could not remove station')
             notifications.show({
                 position:'top-right',
@@ -253,7 +253,7 @@ function AppProvider() {
                 title: 'Worker deleted',
                 message: 'The worker was deleted successfully',
             });
-        } catch (error) {
+        } catch {
             setWorkersError('Could not delete worker')
             notifications.show({
                 position:'top-right',
@@ -275,7 +275,7 @@ function AppProvider() {
                 title: 'Worker updated',
                 message: 'The worker was updated successfully',
             });
-        } catch (error) {
+        } catch {
             setWorkersError('Could not update worker')
             notifications.show({
                 position:'top-right',
@@ -297,7 +297,7 @@ function AppProvider() {
             title: 'Worker created',
             message: 'The worker was added successfully',
             });
-        }catch (error){
+        }catch {
             setWorkersError('Could not create worker')
             notifications.show({
             position:'top-right',

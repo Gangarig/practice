@@ -1,7 +1,8 @@
 import { Badge, Group, Paper, Spoiler, Text } from '@mantine/core'
-import type { Assignment, Weekdays } from '../../types/Assignment'
+import type { Assignment } from '../../types/Assignment'
 import type { Worker } from '../../types/Worker'
 import useApp from '../../hooks/useApp'
+import { formatDate } from '../../lib/dateUtils'
 
 const statusColors = {
   available: 'green',
@@ -11,7 +12,7 @@ const statusColors = {
 } as const
 
 function WorkerAvailability() {
-  const { workers, assignments, stations,monday,weekDays } = useApp()
+  const { workers, assignments, stations,weekDays } = useApp()
 
   function getAvailability(worker: Worker, assignment: Assignment | undefined) {
     if (worker.status !== 'available') {
@@ -55,7 +56,7 @@ function WorkerAvailability() {
               </div>
               {weekDays.map((day) => {
                 const assignment = assignments.find(
-                  (item) => item.workerId === worker.id && item.date.getTime() === day.date.getTime(),
+                  (item) => item.workerId === worker.id && item.date === formatDate(day.date),
                 )
                 const availability = getAvailability(worker, assignment)
                 return (

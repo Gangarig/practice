@@ -2,22 +2,22 @@ import type { Station } from "../types/Station";
 
 const mockStations : Station [] =[
     {
-    id:1,
+    id:'1',
     name:'Beizen',
     active:true,
     },
         {
-    id:2,
+    id:'2',
     name:'Faerben',
     active:true,
     },
         {
-    id:3,
+    id:'3',
     name:'Badfuehrung',
     active:true,
     },
         {
-    id:4,
+    id:'4',
     name:'Instandhaltung',
     active:true,
     },

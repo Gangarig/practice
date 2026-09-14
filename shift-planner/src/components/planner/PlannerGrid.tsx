@@ -1,9 +1,9 @@
 import { Paper, Text } from '@mantine/core'
 import type { Station } from '../../types/Station'
 import type { Worker } from '../../types/Worker'
-import type { Assignment , Weekdays } from '../../types/Assignment'
+import type { Assignment , WorkWeek} from '../../types/Assignment'
 import GridCell from './GridCell'
-
+import {formatDate} from '../../lib/dateUtils'
 interface PlannerGridProps {
   stations: Station[]
   workers: Worker[]
@@ -11,7 +11,7 @@ interface PlannerGridProps {
   onRemoveAssignment: (assignment: Assignment) => void
   onSelectAssignment: (value: Assignment | null) => void
   monday: Date
-  weekDays: Weekdays
+  weekDays: WorkWeek
 }
 
 function PlannerGrid({
@@ -20,7 +20,6 @@ function PlannerGrid({
   assignments,
   onRemoveAssignment,
   onSelectAssignment,
-  monday,
   weekDays,
 }: PlannerGridProps) {
 
@@ -33,7 +32,7 @@ function PlannerGrid({
         {weekDays.map((day) => (
           <div className="planner-day-header" key={day.label}>
             <Text fw={700} size="sm">
-              <span className="day-name-full">{day.label}</span>
+              <span className="day-name-full">{day.label} {day.date.toLocaleDateString()}</span>
               <span className="day-name-short">{day.label.slice(0, 3)}</span>
             </Text>
           </div>
@@ -46,7 +45,7 @@ function PlannerGrid({
             </div>
             {weekDays.map((day) => {
               const assignment = assignments.find(
-                (item) => item.stationId === station.id && item.date.getTime() === day.date.getTime(),
+                (item) => item.stationId === station.id && item.date === formatDate(day.date),
               ) ?? null
               const worker = assignment
                 ? workers.find((item) => item.id === assignment.workerId) ?? null

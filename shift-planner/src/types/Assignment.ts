@@ -2,10 +2,11 @@ export interface Assignment {
     id:string,
     workerId:string,
     stationId:string,
-    date:Date,
+    date:string,
     note?:string | null,
 }
 
 export type NewAssignment = Omit<Assignment,"id">
 
-export type Weekdays = { label: string; date: Date }[]
+export type Weekday = { label: string; date: Date }
+export type WorkWeek =  Weekday[]

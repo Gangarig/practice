@@ -1,4 +1,4 @@
-import React , {useEffect, useState} from 'react'
+import React , {useState} from 'react'
 import type { Station } from '../../types/Station'
 import { Button, Group, Paper, SegmentedControl, Stack, Text, TextInput } from '@mantine/core'
 
@@ -36,14 +36,6 @@ function StationEdit({selectedStation,onRemoveStation,onUpdateStation}:StationEd
         onRemoveStation(selectedStation)
         return
     }
-
-    useEffect(()=>{
-        if(!selectedStation) return 
-        setStationName(selectedStation.name)
-        setStationStatus(selectedStation.active)
-    },[selectedStation])
-
-
 
   if (!selectedStation) return null
   return (

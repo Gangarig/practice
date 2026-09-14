@@ -9,7 +9,7 @@ import StationList from '../components/stations/StationList';
 import StationDetail from '../components/stations/StationDetail';
 import StationEdit from '../components/stations/StationEdit';
 import { useDisclosure } from '@mantine/hooks';
-import { Badge, Box, Button, Group, LoadingOverlay, Modal, Paper, SimpleGrid, Stack, Text, Title } from '@mantine/core';
+import { Alert, Badge, Box, Button, Group, LoadingOverlay, Modal, Paper, SimpleGrid, Stack, Text, Title } from '@mantine/core';
 
 function StationsPage() {
     const [selectedStation , setSelectedStation] = useState<Station | null>(null)
@@ -32,10 +32,6 @@ function StationsPage() {
   return (
         <Box pos="relative" className="page-container">
             <LoadingOverlay visible={loadingStations} loaderProps={{ children: 'Loading...' }} />
-            {stations.length === 0 && !loadingStations && (
-                <Text>No stations found</Text>
-            )}
-            {stationsError && <Text color="red">Could not load stations</Text>}
             <Stack gap="lg">
               <Group justify="space-between" align="flex-end">
                 <div>
@@ -50,14 +46,28 @@ function StationsPage() {
                   <StationSort sortOrderStation={sortOrderStation} onSortStation={setSortOrderStation} />
                 </SimpleGrid>
               </Paper>
+              {stationsError && (
+                <Alert color="red" title="Stations could not be loaded">
+                  Check your connection and try again.
+                </Alert>
+              )}
+              {!stationsError && stations.length === 0 && !loadingStations && (
+                <Alert color="gray" title="No stations yet">
+                  Add your first station so the planner has rows to schedule.
+                </Alert>
+              )}
               <SimpleGrid cols={{ base: 1, md: selectedStation ? 2 : 1 }}>
-                {!stationsError && stations.length > 0 && stations.length === 0 && (
-                <Text>No stations match your search.</Text>
+                {!stationsError && stations.length > 0 && sortedStations.length === 0 && (
+                <Alert color="yellow" title="No stations match your search">
+                  Try another station name or sort option.
+                </Alert>
                 )}
-                <StationList stations={sortedStations} selectedStation={selectedStation} onSelectedStation={setSelectedStation} />
+                {sortedStations.length > 0 && (
+                  <StationList stations={sortedStations} selectedStation={selectedStation} onSelectedStation={setSelectedStation} />
+                )}
                 {selectedStation && <Stack>
                   <StationDetail assignments={assignments} selectedStation={selectedStation} onSelectedStation={setSelectedStation} />
-                  <StationEdit selectedStation={selectedStation} onUpdateStation={updateStation} onRemoveStation={removeStation} />
+                  <StationEdit key={selectedStation.id} selectedStation={selectedStation} onUpdateStation={updateStation} onRemoveStation={removeStation} />
                 </Stack>}
               </SimpleGrid>
             </Stack>

@@ -9,7 +9,7 @@ import useApp from "../hooks/useApp"
 import type { Worker } from "../types/Worker"
 import Search from "../components/Search"
 import { useDisclosure } from '@mantine/hooks';
-import { Badge, Box, Button, Group, LoadingOverlay, Modal, Paper, SimpleGrid, Stack, Text, Title } from '@mantine/core';
+import { Alert, Badge, Box, Button, Group, LoadingOverlay, Modal, Paper, SimpleGrid, Stack, Text, Title } from '@mantine/core';
 
 function WorkersPage() {
   const [search,setSearch]=useState<string>('')
@@ -35,10 +35,6 @@ function WorkersPage() {
   }
   return (
     <Box pos="relative" className="page-container">
-          {workersError &&  <Text color="red">Could not load workers</Text>}
-          {!workersError && workers.length === 0 && !loadingWorkers && (
-            <Text>No workers found</Text>
-          )}  
           <LoadingOverlay visible={loadingWorkers} loaderProps={{ children: 'Loading...' }} />
           <Stack gap="lg">
             <Group justify="space-between" align="flex-end">
@@ -57,18 +53,32 @@ function WorkersPage() {
                 <WorkerSort sortOrder={sortOrderWorker} onSort={setSortOrderWorker} />
               </SimpleGrid>
             </Paper>
+            {workersError &&  (
+              <Alert color="red" title="Workers could not be loaded">
+                Check your connection and try again.
+              </Alert>
+            )}
+            {!workersError && workers.length === 0 && !loadingWorkers && (
+              <Alert color="gray" title="No workers yet">
+                Add your first worker to start building the schedule.
+              </Alert>
+            )}
             {workers.length > 0 &&
             <SimpleGrid cols={{ base: 1, md: selectedWorker ? 2 : 1 }} spacing="lg">
               {!workersError && workers.length > 0 && sortedWorkers.length === 0 && (
-                <Text>No workers match your search.</Text>
+                <Alert color="yellow" title="No workers match your search">
+                  Try a different name or sort option.
+                </Alert>
               )} 
-              <WorkerList selectedWorker={selectedWorker} setSelectedWorker={setSelectedWorker} workers={sortedWorkers} />
+              {sortedWorkers.length > 0 && (
+                <WorkerList selectedWorker={selectedWorker} setSelectedWorker={setSelectedWorker} workers={sortedWorkers} />
+              )}
               {selectedWorker && (
                 <Stack>
                   <WorkerDetail worker={selectedWorker} setSelectedWorker={setSelectedWorker}
                     onRemoveWorker={removeWorker} onChangeOfStatus={handleUpdateWorker}
                     assignments={assignments} updateWorkerState={handleUpdateWorker} />
-                  <WorkerEdit selectedWorker={selectedWorker} onUpdateWorker={updateWorker} />
+                  <WorkerEdit key={selectedWorker.id} selectedWorker={selectedWorker} onUpdateWorker={updateWorker} />
                 </Stack>
               )}
             </SimpleGrid>
