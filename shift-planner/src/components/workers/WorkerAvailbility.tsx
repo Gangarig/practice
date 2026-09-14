@@ -7,7 +7,6 @@ import { toDateKey } from '../../lib/dateUtils'
 const statusColors = {
   available: 'green',
   sick: 'red',
-  vacation: 'yellow',
   holiday: 'orange',
   inactive: 'gray',
 } as const
