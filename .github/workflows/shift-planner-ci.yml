@@ -1,0 +1,27 @@
+name: Shift Planner CI
+
+on:
+  push:
+    branches:
+      - codex/mvp-drag-drop-availability
+  pull_request:
+    paths:
+      - 'shift-planner/**'
+      - '.github/workflows/shift-planner-ci.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: shift-planner
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: shift-planner/package-lock.json
+      - run: npm ci
+      - run: npm run build
+      - run: npm run lint

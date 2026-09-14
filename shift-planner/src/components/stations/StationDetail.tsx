@@ -26,7 +26,7 @@ function StationDetail({ assignments,selectedStation , onSelectedStation}:Statio
         <Text size="sm" c="dimmed">{stationAssignment.length} scheduled assignment{stationAssignment.length === 1 ? '' : 's'}</Text>
         {stationAssignment.map((assignment) =>
           <Paper key={assignment.id} withBorder p="sm">
-            <Text fw={600}>{assignment.date}</Text>
+            <Text fw={600}>{assignment.date.toLocaleDateString()}</Text>
             <Text size="sm" c="dimmed">Worker ID: {assignment.workerId}</Text>
             {assignment.note && <Text size="sm">{assignment.note}</Text>}
           </Paper>

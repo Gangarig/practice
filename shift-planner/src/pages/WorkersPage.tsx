@@ -68,7 +68,7 @@ function WorkersPage() {
                   <WorkerDetail worker={selectedWorker} setSelectedWorker={setSelectedWorker}
                     onRemoveWorker={removeWorker} onChangeOfStatus={handleUpdateWorker}
                     assignments={assignments} updateWorkerState={handleUpdateWorker} />
-                  <WorkerEdit selectedWorker={selectedWorker} onUpdateWorker={updateWorker} />
+                  <WorkerEdit key={selectedWorker.id} selectedWorker={selectedWorker} onUpdateWorker={updateWorker} />
                 </Stack>
               )}
             </SimpleGrid>
