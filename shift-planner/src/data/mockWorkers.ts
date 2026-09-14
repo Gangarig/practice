@@ -2,7 +2,7 @@ import type { Worker } from "../types/Worker";
 
 const mockWorkers : Worker [] = [
     {   
-        id:1,
+        id:'1',
         name:'Ganaa',
         status: 'available',
         role: 'worker',
@@ -12,7 +12,7 @@ const mockWorkers : Worker [] = [
         plusHours:-20,
     },
         {   
-        id:2,
+        id:'2',
         name:'test',
         status: 'sick',
         role: 'worker',
@@ -22,7 +22,7 @@ const mockWorkers : Worker [] = [
         plusHours:50,
     },
         {   
-        id:3,
+        id:'3',
         name:'John',
         status: 'vacation',
         role: 'worker',
@@ -32,7 +32,7 @@ const mockWorkers : Worker [] = [
         plusHours:-10,
     },
         {   
-        id:4,
+        id:'4',
         name:'test2',
         status: 'available',
         role: 'worker',
@@ -42,7 +42,7 @@ const mockWorkers : Worker [] = [
         plusHours:0,
     },
         {   
-        id:5,
+        id:'5',
         name:'test34',
         status: 'available',
         role: 'worker',
@@ -52,7 +52,7 @@ const mockWorkers : Worker [] = [
         plusHours:0,
     },
      {   
-        id:6,
+        id:'6',
         name:'test2434',
         status: 'inactive',
         role: 'worker',
@@ -62,7 +62,7 @@ const mockWorkers : Worker [] = [
         plusHours:0,
     },
      {   
-        id:7,
+        id:'7',
         name:'testas34',
         status: 'vacation',
         role: 'worker',
