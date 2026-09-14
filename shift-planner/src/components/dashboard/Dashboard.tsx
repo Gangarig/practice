@@ -15,7 +15,6 @@ import useApp from '../../hooks/useApp'
 const statusColors = {
   available: 'green',
   sick: 'red',
-  vacation: 'yellow',
   holiday: 'orange',
   inactive: 'gray',
 } as const
@@ -61,7 +60,7 @@ function Dashboard() {
       sum[worker.status] += 1
       return sum
     },
-    { available: 0, sick: 0, vacation: 0, holiday: 0, inactive: 0 },
+    { available: 0, sick: 0, holiday: 0, inactive: 0 },
   )
 
   const activeStations = stations.filter((station) => station.active).length
