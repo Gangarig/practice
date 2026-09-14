@@ -1,17 +1,19 @@
 import { Badge, Group, Paper, Spoiler, Text } from '@mantine/core'
-import type { Assignment, Weekdays } from '../../types/Assignment'
+import type { Assignment } from '../../types/Assignment'
 import type { Worker } from '../../types/Worker'
 import useApp from '../../hooks/useApp'
+import { toDateKey } from '../../lib/dateUtils'
 
 const statusColors = {
   available: 'green',
   sick: 'red',
   vacation: 'yellow',
+  holiday: 'orange',
   inactive: 'gray',
 } as const
 
 function WorkerAvailability() {
-  const { workers, assignments, stations,monday,weekDays } = useApp()
+  const { workers, assignments, stations, weekDays } = useApp()
 
   function getAvailability(worker: Worker, assignment: Assignment | undefined) {
     if (worker.status !== 'available') {
@@ -55,11 +57,11 @@ function WorkerAvailability() {
               </div>
               {weekDays.map((day) => {
                 const assignment = assignments.find(
-                  (item) => item.workerId === worker.id && item.date.getTime() === day.date.getTime(),
+                  (item) => item.workerId === worker.id && toDateKey(item.date) === toDateKey(day.date),
                 )
                 const availability = getAvailability(worker, assignment)
                 return (
-                  <div className="availability-cell" key={`${worker.id}-${day}`}>
+                  <div className="availability-cell" key={`${worker.id}-${toDateKey(day.date)}`}>
                     <Badge
                       color={availability.color}
                       variant="light"
