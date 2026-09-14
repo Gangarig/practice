@@ -1,87 +1,44 @@
-import type { Station } from "../../types/Station"
-import type { Worker } from "../../types/Worker"
-import type { Assignment,NewAssignment,Weekdays } from "../../types/Assignment"
-import { useState } from "react"
+import { useState } from 'react'
 import { Button, Select, Stack, Textarea } from '@mantine/core'
+import type { Station } from '../../types/Station'
+import type { Worker } from '../../types/Worker'
+import type { Assignment, NewAssignment, Weekdays } from '../../types/Assignment'
+import { fromDateKey, toDateKey } from '../../lib/dateUtils'
 
 interface AssignmentControlsProps {
-    stations:Station[] | null,
-    workers:Worker[] | null,
-    assignments:Assignment[],
-    onCreateAssignment : (value:NewAssignment)=>void
-    onCreated?: () => void,
-    monday:Date,
-    weekDays:Weekdays
+  stations: Station[]
+  workers: Worker[]
+  assignments: Assignment[]
+  onCreateAssignment: (value: NewAssignment) => Promise<void>
+  onCreated?: () => void
+  weekDays: Weekdays
 }
 
-function AssignmentControls({stations,workers,assignments,onCreateAssignment,onCreated
-,monday,weekDays
-}:AssignmentControlsProps) {
+function AssignmentControls({ stations, workers, assignments, onCreateAssignment, onCreated, weekDays }: AssignmentControlsProps) {
+  const [selectedWorkerId, setSelectedWorkerId] = useState('')
+  const [selectedStationId, setSelectedStationId] = useState('')
+  const [selectedDate, setSelectedDate] = useState(toDateKey(weekDays[0].date))
+  const [note, setNote] = useState('')
 
-    const [selectedWorkerId,setSelectedWorkerId] = useState<string|''>('');
-    const [selectedStationId,setSelectedStationId] = useState<string|''>('');
-    const [selectedDay,setSelectedDay] = useState<string>(weekDays[0].label); 
-    const [note , setNote] = useState<string>('')
-    function handleNote (note:string) {
-        setNote(note)
-    }
-    function handleSubmit(){
-        const worker = workers?.find(worker => worker.id === selectedWorkerId)
-        const station = stations?.find(station => station.id === selectedStationId)
-        if(!worker) {
-            return console.log('Worker error')
-        }
-        if(!station) {
-            return console.log('Station error')
-        }
-        if(!selectedDay){
-            return console.log('Date error')
-        }
-        if(assignments.find(item => item.date === selectedDay && selectedStationId === item.stationId)) {
-            return console.log('station/day already occupied')
-        }
-        if(assignments.find(item => item.date === selectedDay && selectedWorkerId === item.workerId)) {
-            return console.log('worker already assigned on other station')
-        }
-        if(!station?.active) {
-            return console.log('Station is not acitve')
-        }
-        if (worker.status !== 'available') {
-            return console.log('worker is not available')
-        }
+  async function handleSubmit() {
+    const worker = workers.find((item) => item.id === selectedWorkerId)
+    const station = stations.find((item) => item.id === selectedStationId)
+    if (!worker || !station || !selectedDate || !station.active || worker.status !== 'available') return
+    const date = fromDateKey(selectedDate)
+    const isStationTaken = assignments.some((item) => item.stationId === station.id && toDateKey(item.date) === selectedDate)
+    const isWorkerTaken = assignments.some((item) => item.workerId === worker.id && toDateKey(item.date) === selectedDate)
+    if (isStationTaken || isWorkerTaken) return
+    await onCreateAssignment({ workerId: worker.id, stationId: station.id, date, note: note.trim() || null })
+    onCreated?.()
+  }
 
-        const assignment: NewAssignment = {
-            workerId: worker.id,
-            stationId: station.id,
-            date: selectedDay,
-            note: note
-        }
-        onCreateAssignment(assignment)
-        setSelectedDay(null)
-        setSelectedStationId('')
-        setSelectedWorkerId('')
-        setNote('')
-        onCreated?.()
-        return
-    }
-
-
-  return (
-      <Stack gap="sm">
-          <Select size="sm" label="Station" placeholder="Choose station" searchable value={selectedStationId}
-            data={(stations ?? []).map((station) => ({ value: station.id, label: station.name, disabled: !station.active }))}
-            onChange={(value) => setSelectedStationId(value ?? '')} />
-          <Select size="sm" label="Worker" placeholder="Choose worker" searchable value={selectedWorkerId}
-            data={(workers ?? []).map((worker) => ({ value: worker.id, label: worker.name, disabled: worker.status !== 'available' }))}
-            onChange={(value) => setSelectedWorkerId(value ?? '')} />
-          <Select size="sm" label="Day" placeholder="Choose day" value={selectedDay}
-            data={['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday']}
-            onChange={(value) => setSelectedDay((value ?? '') as Weekday | '')} />
-        <Textarea size="sm" label="Note" placeholder="Optional handover note" autosize minRows={2} value={note}
-          onChange={(e) => handleNote(e.currentTarget.value)} />
-        <Button fullWidth onClick={handleSubmit}>Create assignment</Button>
-      </Stack>
-  )
+  return <Stack gap="sm">
+    <Select label="Station" placeholder="Choose station" searchable value={selectedStationId} data={stations.map((station) => ({ value: station.id, label: station.name, disabled: !station.active }))} onChange={(value) => setSelectedStationId(value ?? '')} />
+    <Select label="Worker" placeholder="Choose worker" searchable value={selectedWorkerId} data={workers.map((worker) => ({ value: worker.id, label: worker.name, disabled: worker.status !== 'available' }))} onChange={(value) => setSelectedWorkerId(value ?? '')} />
+    <Select label="Day" value={selectedDate} data={weekDays.map((day) => ({ value: toDateKey(day.date), label: day.label }))} onChange={(value) => setSelectedDate(value ?? '')} />
+    <Textarea label="Note" placeholder="Optional handover note" autosize minRows={2} value={note} onChange={(event) => setNote(event.currentTarget.value)} />
+    <Button fullWidth onClick={() => void handleSubmit()} disabled={!selectedWorkerId || !selectedStationId}>Create assignment</Button>
+  </Stack>
 }
 
 export default AssignmentControls
