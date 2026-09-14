@@ -1,4 +1,4 @@
-import type { Worker } from '../../types/Worker'
+import type { Worker, WorkerStatus } from '../../types/Worker'
 import { Avatar, Badge, Group, Paper, Stack, Text } from '@mantine/core'
 interface WorkerCardProps {
     worker :Worker,
@@ -8,7 +8,7 @@ interface WorkerCardProps {
 
 function WorkerCard({worker,selectedWorker,onSelectWorker}:WorkerCardProps) {
     const isSelected = worker.id === selectedWorker?.id;
-    const colors = { available: 'green', sick: 'red', vacation: 'yellow', inactive: 'gray' };
+    const colors: Record<WorkerStatus, string> = { available: 'green', sick: 'red', vacation: 'yellow', holiday: 'orange', inactive: 'gray' };
   return (
     <Paper component="button" type="button" withBorder p="md" radius="md"
     onClick={() => onSelectWorker(worker)}
