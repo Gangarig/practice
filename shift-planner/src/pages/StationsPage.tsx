@@ -57,7 +57,7 @@ function StationsPage() {
                 <StationList stations={sortedStations} selectedStation={selectedStation} onSelectedStation={setSelectedStation} />
                 {selectedStation && <Stack>
                   <StationDetail assignments={assignments} selectedStation={selectedStation} onSelectedStation={setSelectedStation} />
-                  <StationEdit selectedStation={selectedStation} onUpdateStation={updateStation} onRemoveStation={removeStation} />
+                  <StationEdit key={selectedStation.id} selectedStation={selectedStation} onUpdateStation={updateStation} onRemoveStation={removeStation} />
                 </Stack>}
               </SimpleGrid>
             </Stack>
