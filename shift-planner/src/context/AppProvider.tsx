@@ -8,7 +8,7 @@ import type { Station, NewStation } from '../types/Station'
 import { createWorker, updateWorker, removeWorker, loadWorkers } from '../services/workerService'
 import { loadStations, createStation, updateStation, removeStation } from '../services/stationService'
 import { loadAssignments, createAssignment, updateAssignment, removeAssignment } from '../services/assignmentService'
-import { getMondayOfWeek, getWeekDays } from '../lib/dateUtils'
+import { getMondayOfWeek, getWeekDays, toDateKey } from '../lib/dateUtils'
 
 function AppProvider() {
   const [workers, setWorkers] = useState<Worker[]>([])
@@ -120,7 +120,8 @@ function AppProvider() {
   }
 
   async function handleUpdateWorker(worker: Worker) {
-    const workerAssignments = worker.status === 'available' ? [] : assignments.filter((assignment) => assignment.workerId === worker.id)
+    const selectedWeek = new Set(weekDays.map((day) => toDateKey(day.date)))
+    const workerAssignments = worker.status === 'available' ? [] : assignments.filter((assignment) => assignment.workerId === worker.id && selectedWeek.has(toDateKey(assignment.date)))
     try {
       setWorkersError(null)
       if (workerAssignments.length) await Promise.all(workerAssignments.map(removeAssignment))
@@ -129,7 +130,7 @@ function AppProvider() {
       notifications.show({
         color: 'green',
         title: 'Worker updated',
-        message: workerAssignments.length ? `${workerAssignments.length} assignment(s) removed because ${worker.name} is ${worker.status}` : 'The worker was saved',
+        message: workerAssignments.length ? `${workerAssignments.length} assignment(s) removed from this week because ${worker.name} is ${worker.status}` : 'The worker was saved',
       })
     } catch {
       setWorkersError('Could not update worker')
