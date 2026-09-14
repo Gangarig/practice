@@ -24,7 +24,7 @@ const mockWorkers : Worker [] = [
         {   
         id:'3',
         name:'John',
-        status: 'vacation',
+        status: 'holiday',
         role: 'worker',
         email:'test@gmail.com',
         phoneNumber:'495164217798',
@@ -64,7 +64,7 @@ const mockWorkers : Worker [] = [
      {   
         id:'7',
         name:'testas34',
-        status: 'vacation',
+        status: 'holiday',
         role: 'worker',
         email:'asdfa34s@gmail.com',
         phoneNumber:'12341234',
