@@ -7,8 +7,8 @@ interface PlannerWorkerListProps {
   assignments: Assignment[]
 }
 
-const statusColors: Record<WorkerStatus, string> = { available: 'green', sick: 'red', vacation: 'yellow', holiday: 'orange', inactive: 'gray' }
-const unavailableStatuses: WorkerStatus[] = ['sick', 'vacation', 'holiday', 'inactive']
+const statusColors: Record<WorkerStatus, string> = { available: 'green', sick: 'red', holiday: 'orange', inactive: 'gray' }
+const unavailableStatuses: WorkerStatus[] = ['sick', 'holiday', 'inactive']
 
 function PlannerWorkerList({ workers, assignments }: PlannerWorkerListProps) {
   const availableWorkers = workers.filter((worker) => worker.status === 'available').sort((a, b) => a.name.localeCompare(b.name))
