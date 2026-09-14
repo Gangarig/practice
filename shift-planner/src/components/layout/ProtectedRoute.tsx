@@ -1,18 +1,13 @@
-import { Navigate,Outlet } from "react-router-dom"
-import currentUser from "../../data/mockCurrentUser"
-
-interface ProtectedRouteProps {
-    allowedRoles:string[]
+import { Center, Loader } from '@mantine/core'
+import { Navigate, Outlet, useLocation } from 'react-router-dom'
+import { useAuth, type AppRole } from '../../context/AuthContext'
+interface ProtectedRouteProps { allowedRoles: AppRole[] }
+function ProtectedRoute({ allowedRoles }: ProtectedRouteProps) {
+  const { user, loading } = useAuth()
+  const location = useLocation()
+  if (loading) return <Center mih="60vh"><Loader /></Center>
+  if (!user) return <Navigate to="/login" replace state={{ from: location }} />
+  if (!allowedRoles.includes(user.role)) return <Navigate to="/unauthorized" replace />
+  return <Outlet />
 }
-function ProtectedRoute({allowedRoles}:ProtectedRouteProps) {
-  if (!currentUser.isLoggedIn) {
-    return <Navigate to="/login" />;
-  }
-  const isAllowed = allowedRoles.includes(currentUser.role)
-  if(!isAllowed){
-    return <Navigate to='unauthorized'/>
-  }
-  return <Outlet />;
-}
-
 export default ProtectedRoute
