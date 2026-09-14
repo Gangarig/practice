@@ -16,12 +16,13 @@ function WorkerDetail({ worker, onRemoveWorker, setSelectedWorker, assignments, 
   const [vacationDays, setVacationDays] = useState('')
   const [plusHours, setPlusHours] = useState('')
   if (!worker) return null
+  const currentWorker = worker
   function updateNumber(field: 'vacationDays' | 'plusHours', amountText: string, operation: 'add' | 'remove') {
     const amount = Number(amountText)
     if (!amount || amount < 0) return
-    const next = (worker[field] ?? 0) + (operation === 'add' ? amount : -amount)
+    const next = (currentWorker[field] ?? 0) + (operation === 'add' ? amount : -amount)
     if (field === 'vacationDays' && next < 0) return
-    updateWorkerState({ ...worker, [field]: next })
+    updateWorkerState({ ...currentWorker, [field]: next })
   }
   const assignmentCount = assignments.filter((assignment) => assignment.workerId === worker.id).length
   return <Paper withBorder p="lg"><Stack>
